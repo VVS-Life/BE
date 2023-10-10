@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class MemberRequestDTO {
 
+    private String adminId;
+    private String adminPassword;
     @NotNull(message = "이름을 입력하세요")
     private String userName;
     @NotNull(message = "생년월일을 입력하세요")
@@ -25,8 +27,10 @@ public class MemberRequestDTO {
     private String role;
 
     @Builder
-    public MemberRequestDTO(String userName, String birth, String email,
-                            String address, String gender, String phoneNumber, String role) {
+    public MemberRequestDTO(String adminId, String adminPassword, String userName, String birth,
+                            String email, String address, String gender, String phoneNumber, String role) {
+        this.adminId = adminId;
+        this.adminPassword = adminPassword;
         this.userName = userName;
         this.birth = birth;
         this.email = email;
