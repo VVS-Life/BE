@@ -19,6 +19,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public MessageDTO createMember(MemberRequestDTO memberRequestDTO) {
 
         if (memberRepository.existsByEmail(memberRequestDTO.getEmail())) {
@@ -47,6 +48,7 @@ public class MemberService {
                 .build();
     }
 
+    @Transactional
     public MessageDTO createAdmin(MemberRequestDTO memberRequestDTO) {
 
         if (memberRepository.existsByAdminId(memberRequestDTO.getAdminId())) {
@@ -83,6 +85,7 @@ public class MemberService {
                 .build();
     }
 
+    @Transactional
     public MessageDTO loginAdmin(MemberRequestDTO memberRequestDTO) {
         Member member = memberRepository.findByAdminId(memberRequestDTO.getAdminId()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
