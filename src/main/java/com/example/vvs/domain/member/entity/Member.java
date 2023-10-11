@@ -39,8 +39,10 @@ public class Member {
     private String role;
 
     @Builder
-    public Member(String userName, String birth, String email, String address,
-                  String gender, String phoneNumber, String role) {
+    public Member(String adminId, String adminPassword, String userName, String birth, String email,
+                  String address, String gender, String phoneNumber, String role) {
+        this.adminId = adminId;
+        this.adminPassword = adminPassword;
         this.userName = userName;
         this.birth = birth;
         this.email = email;
