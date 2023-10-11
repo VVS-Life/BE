@@ -82,4 +82,19 @@ public class MemberService {
                 .httpStatus(HttpStatus.ACCEPTED)
                 .build();
     }
+
+    public MessageDTO loginAdmin(MemberRequestDTO memberRequestDTO) {
+        Member member = memberRepository.findByAdminId(memberRequestDTO.getAdminId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_ADMIN_ID)
+        );
+
+        if (!member.getAdminPassword().equals(memberRequestDTO.getAdminPassword())) {
+            throw new ApiException(NOT_MATCH_PASSWORD);
+        }
+
+        return MessageDTO.builder()
+                .message("로그인 성공")
+                .httpStatus(HttpStatus.ACCEPTED)
+                .build();
+    }
 }
