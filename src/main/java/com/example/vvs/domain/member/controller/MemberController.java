@@ -19,7 +19,12 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public MessageDTO postAdmin(MemberRequestDTO memberRequestDTO) {
+    public MessageDTO postAdminJoin(MemberRequestDTO memberRequestDTO) {
         return memberService.createAdmin(memberRequestDTO);
+    }
+
+    @PostMapping("/login")
+    public MessageDTO postAdminLogin(MemberRequestDTO memberRequestDTO) {
+        return memberService.loginAdmin(memberRequestDTO);
     }
 }
