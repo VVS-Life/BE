@@ -3,6 +3,8 @@ package com.example.vvs.domain.product.service;
 import com.example.vvs.domain.product.dto.ProductDTO;
 import com.example.vvs.domain.product.entity.Product;
 import com.example.vvs.domain.product.repository.ProductRepository;
+import com.example.vvs.exception.ApiException;
+import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +24,9 @@ public class ProductService {
         List<Product> productList = productRepository.findByCategory(category);
         List<ProductDTO> dtoList = new ArrayList<>();
 
-//        if (productList.isEmpty()) {
-//            throw new
-//        }
+        if (productList.isEmpty()) {
+            throw new ApiException(ErrorHandling.IS_EMPTY_LIST);
+        }
 
         for (Product eachProduct : productList) {
             dtoList.add(ProductDTO.builder()
