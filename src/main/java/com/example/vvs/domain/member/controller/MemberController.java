@@ -4,8 +4,8 @@ import com.example.vvs.domain.common.MessageDTO;
 import com.example.vvs.domain.member.dto.MemberRequestDTO;
 import com.example.vvs.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,13 +15,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public MessageDTO postMember(MemberRequestDTO memberRequestDTO) {
+    public MessageDTO postMember(@RequestBody MemberRequestDTO memberRequestDTO) {
         return memberService.createMember(memberRequestDTO);
-    }
-
-    @PostMapping("/join")
-    public MessageDTO postAdminJoin(MemberRequestDTO memberRequestDTO) {
-        return memberService.createAdmin(memberRequestDTO);
     }
 
     @PostMapping("/login")
