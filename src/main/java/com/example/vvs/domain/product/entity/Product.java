@@ -1,5 +1,7 @@
 package com.example.vvs.domain.product.entity;
 
+import com.example.vvs.domain.product.dto.ProductRequestDTO;
+import com.example.vvs.domain.product.dto.ProductResponseDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,11 +31,17 @@ public class Product {
     private String category;
 
     @Builder
-    public Product(Long id, String productName, String content, int price, String category) {
-        this.id = id;
+    public Product(String productName, String content, int price, String category) {
         this.productName = productName;
         this.content = content;
         this.price = price;
         this.category = category;
+    }
+
+    public void update(ProductRequestDTO productRequestDTO){
+        productName = productRequestDTO.getProductName();
+        content = productRequestDTO.getContent();
+        price = productRequestDTO.getPrice();
+        category = productRequestDTO.getCategory();
     }
 }
