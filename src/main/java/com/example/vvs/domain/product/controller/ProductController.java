@@ -1,14 +1,13 @@
 package com.example.vvs.domain.product.controller;
 
-import com.example.vvs.domain.product.dto.ProductDTO;
+import com.example.vvs.domain.product.dto.ProductRequestDTO;
+import com.example.vvs.domain.product.dto.ProductResponseDTO;
 import com.example.vvs.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -17,9 +16,24 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/productList")
-    public List<ProductDTO> productList(@RequestParam String category){
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductResponseDTO>> productList(){
+        return productService.findProductList();
+    }
+
+    @GetMapping("/products?category={category}")
+    public ResponseEntity<List<ProductResponseDTO>> productList(@RequestParam String category){
         return productService.findProductListByCategory(category);
     }
 
+    @GetMapping("/products/{id}")
+    public ResponseEntity<ProductResponseDTO> productDetail(@RequestParam Long id){
+        return productService.findProductDetailById(id);
+    }
+
+//    @PostMapping("/products/{id}/calc")
+//    public ResponseEntity<ProductResponseDTO> productPriceCalc(@RequestBody char gender,
+//                                                               @RequestBody String birth) {
+//        return productService.calcExpectedPrice();
+//    }
 }
