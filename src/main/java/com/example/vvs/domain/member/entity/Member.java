@@ -1,5 +1,6 @@
 package com.example.vvs.domain.member.entity;
 
+import com.example.vvs.domain.member.dto.MemberRequestDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,4 +52,5 @@ public class Member {
         this.phoneNumber = phoneNumber;
         this.role = role;
     }
+
 }

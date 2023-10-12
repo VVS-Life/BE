@@ -4,6 +4,7 @@ import com.example.vvs.domain.common.MessageDTO;
 import com.example.vvs.domain.member.dto.MemberRequestDTO;
 import com.example.vvs.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
