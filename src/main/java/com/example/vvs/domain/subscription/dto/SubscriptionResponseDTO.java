@@ -15,7 +15,6 @@ public class SubscriptionResponseDTO {
     private String reason;
     private Timestamp applyDate;
     private Timestamp joinDate;
-    private Timestamp paymentDate;
     private Timestamp endDate;
 
     @Builder
@@ -26,7 +25,6 @@ public class SubscriptionResponseDTO {
         this.reason = subscription.getReason();
         this.applyDate = subscription.getApplyDate();
         this.joinDate = subscription.getJoinDate();
-        this.paymentDate = subscription.getPaymentDate();
         this.endDate = subscription.getEndDate();
     }
 }

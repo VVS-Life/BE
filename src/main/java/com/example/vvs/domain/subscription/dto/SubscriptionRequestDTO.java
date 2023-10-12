@@ -14,19 +14,19 @@ public class SubscriptionRequestDTO {
     private String reason;
     private Timestamp applyDate;
     private Timestamp joinDate;
-    private Timestamp paymentDate;
     private Timestamp endDate;
+    private Long memberId;
 
     @Builder
     public SubscriptionRequestDTO(int period, int insFee, String isApproval, String reason,
-                                  Timestamp applyDate, Timestamp joinDate, Timestamp paymentDate, Timestamp endDate) {
+                                  Timestamp applyDate, Timestamp joinDate, Timestamp endDate, Long memberId) {
         this.period = period;
         this.insFee = insFee;
         this.isApproval = isApproval;
         this.reason = reason;
         this.applyDate = applyDate;
         this.joinDate = joinDate;
-        this.paymentDate = paymentDate;
         this.endDate = endDate;
+        this.memberId = memberId;
     }
 }
