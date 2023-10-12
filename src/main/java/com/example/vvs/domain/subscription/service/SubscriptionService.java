@@ -9,11 +9,16 @@ import com.example.vvs.domain.subscription.repository.SubscriptionRepository;
 import com.example.vvs.exception.ApiException;
 import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.example.vvs.exception.ErrorHandling.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -37,4 +42,23 @@ public class SubscriptionService {
                                     .subscription(subscription)
                                     .build();
     }
+
+    public List<SubscriptionResponseDTO> findAllSubscription(Long memberId) {
+        List<Subscription> subscriptionList = subscriptionRepository.findByMemberId(memberId);
+        List<SubscriptionResponseDTO> subscriptionResponseDTOList = new ArrayList<>();
+
+        if (subscriptionList.isEmpty()) {
+            throw new ApiException(EMPTY_SUBSCRIPTION);
+        }
+
+        for (Subscription subscription : subscriptionList) {
+            SubscriptionResponseDTO subscriptionResponseDTO = SubscriptionResponseDTO.builder()
+                    .subscription(subscription)
+                    .build();
+            subscriptionResponseDTOList.add(subscriptionResponseDTO);
+        }
+
+        return subscriptionResponseDTOList;
+    }
+
 }

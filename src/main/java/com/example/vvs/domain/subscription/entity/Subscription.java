@@ -58,7 +58,6 @@ public class Subscription {
         this.applyDate = subscriptionRequestDTO.getApplyDate();
         this.joinDate = subscriptionRequestDTO.getJoinDate();
         this.member = member;
-        setEndDate();
     }
 
 
