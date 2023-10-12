@@ -42,6 +42,6 @@ public class MemberRequestDTO {
         this.address = address;
         this.gender = gender;
         this.phoneNumber = phoneNumber;
-        this.role = role;
+        this.role = role == null ? "member" : role;
     }
 }
