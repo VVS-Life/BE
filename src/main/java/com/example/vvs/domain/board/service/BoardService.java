@@ -10,8 +10,11 @@ import com.example.vvs.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.constraints.Null;
 
 
 @Service // 스프링빈 등록
@@ -48,5 +51,17 @@ public class BoardService {
                 .message("문의글 등록 성공")
                 .statusCode(200)
                 .build();
+    }
+
+
+    public ResponseEntity<BoardResponseDTO> getOneBoard(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(
+                        NullPointerException::new
+                );
+
+        BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder().board(board).build();
+
+        return ResponseEntity.ok(boardResponseDTO); // ResponseEntity<BoardResponseDTO> 타입
     }
 }

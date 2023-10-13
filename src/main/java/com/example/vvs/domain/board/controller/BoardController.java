@@ -12,6 +12,7 @@ import com.example.vvs.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -26,19 +27,33 @@ public class BoardController {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
+    // 게시글 등록. member-id 임시. 나중에 헤더에서 가져와야함.
+    @PostMapping("/board/{member-id}")
+    public MessageDTO postBoard(@RequestBody BoardRequestDTO boardRequestDTO, @PathVariable("member-id") Long memberId ) {
+        return boardService.createBoard(boardRequestDTO, memberId);
+    }
 
+    // 게시판 전체 조회
     @GetMapping("/board") // /board?page=1&size=10
     public Page<BoardResponseDTO> getBoard(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return boardService.getBoard(pageRequest);
     }
 
-
-    // member-id 임시. 나중에 헤더에서 가져와야함.
-    @PostMapping("/board/{member-id}")
-    public MessageDTO postBoard(@RequestBody BoardRequestDTO boardRequestDTO, @PathVariable("member-id") Long memberId ) {
-        return boardService.createBoard(boardRequestDTO, memberId);
+    // 게시글 상세 조회
+    @GetMapping("/board/{id}")
+    public ResponseEntity<BoardResponseDTO> getOneBoard(@PathVariable("id") Long id) {
+        return boardService.getOneBoard(id);
     }
+
+    
+
+
+
+
+
+
+
 
 
 
