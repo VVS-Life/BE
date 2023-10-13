@@ -44,44 +44,7 @@ public class MemberService {
 
         return MessageDTO.builder()
                 .message("회원 가입 완료")
-                .httpStatus(HttpStatus.ACCEPTED)
-                .build();
-    }
-
-    @Transactional
-    public MessageDTO createAdmin(MemberRequestDTO memberRequestDTO) {
-
-        if (memberRepository.existsByAdminId(memberRequestDTO.getAdminId())) {
-            throw new ApiException(NO_UNIQUE_ADMIN_ID);
-        }
-
-        if (memberRepository.existsByEmail(memberRequestDTO.getEmail())) {
-            throw new ApiException(NO_UNIQUE_EMAIL);
-        }
-
-        if (memberRepository.existsByPhoneNumber(memberRequestDTO.getPhoneNumber())) {
-            throw new ApiException(NO_UNIQUE_PHONENUMBER);
-        }
-
-        String role = "admin";
-
-        Member member = Member.builder()
-                .adminId(memberRequestDTO.getAdminId())
-                .adminPassword(memberRequestDTO.getAdminPassword())
-                .userName(memberRequestDTO.getUserName())
-                .birth(memberRequestDTO.getBirth())
-                .email(memberRequestDTO.getEmail())
-                .address(memberRequestDTO.getAddress())
-                .gender(memberRequestDTO.getGender())
-                .phoneNumber(memberRequestDTO.getPhoneNumber())
-                .role(role)
-                .build();
-
-        memberRepository.save(member);
-
-        return MessageDTO.builder()
-                .message("관리자 회원 가입 완료")
-                .httpStatus(HttpStatus.ACCEPTED)
+                .statusCode(HttpStatus.OK.value())
                 .build();
     }
 
@@ -97,7 +60,7 @@ public class MemberService {
 
         return MessageDTO.builder()
                 .message("로그인 성공")
-                .httpStatus(HttpStatus.ACCEPTED)
+                .statusCode(HttpStatus.OK.value())
                 .build();
     }
 }

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -36,7 +37,7 @@ public class Member {
     @Column(length = 13, nullable = false)
     private String phoneNumber;
     @Column(length = 8, nullable = false)
-    @ColumnDefault("member")
+    @ColumnDefault("\"member\"")
     private String role;
 
     @Builder
