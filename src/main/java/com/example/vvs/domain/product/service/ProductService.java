@@ -106,7 +106,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<ProductResponseDTO> modifyProduct(Long id, ProductRequestDTO productRequestDTO){
+    public ResponseEntity<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO productRequestDTO){
 
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new ApiException(IS_NULL)
@@ -120,7 +120,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> removeProduct(Long id){
+    public ResponseEntity<MessageDTO> deleteProduct(Long id){
 
         productRepository.findById(id).orElseThrow(
                 () -> new ApiException(IS_NULL)
@@ -134,7 +134,7 @@ public class ProductService {
                 .build());
     }
 
-    public ResponseEntity<PriceCalcResponseDTO> calcExceptedPrice(Long id, char gender, String birth) {
+    public ResponseEntity<PriceCalcResponseDTO> findCalcExpectedPrice(Long id, char gender, String birth) {
 
         Integer price = productRepository.findPriceById(id);
 
@@ -142,7 +142,7 @@ public class ProductService {
             throw new ApiException(IS_NULL);
         }
 
-        price = calcExcepPrice(gender, birth, price);
+        price = calcExpectedPrice(gender, birth, price);
 
         PriceCalcResponseDTO priceCalcResponseDTO = PriceCalcResponseDTO.builder()
                 .price(price)
@@ -151,7 +151,7 @@ public class ProductService {
         return ResponseEntity.ok(priceCalcResponseDTO);
     }
 
-    public Integer calcExcepPrice(char gender, String birth, Integer price) {
+    public Integer calcExpectedPrice(char gender, String birth, Integer price) {
 
         PriceCalcRequestDTO priceCalcRequestDTO = PriceCalcRequestDTO.builder()
                 .birth(birth)

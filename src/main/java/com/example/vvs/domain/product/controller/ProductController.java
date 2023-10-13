@@ -17,24 +17,24 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<ProductResponseDTO>> productList(){
+    public ResponseEntity<List<ProductResponseDTO>> getProductList(){
         return productService.findProductList();
     }
 
     @GetMapping("/products/search")
-    public ResponseEntity<List<ProductResponseDTO>> productList(@RequestParam String category){
+    public ResponseEntity<List<ProductResponseDTO>> getProductList(@RequestParam String category){
         return productService.findProductListByCategory(category);
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ProductResponseDTO> productDetail(@PathVariable Long id){
+    public ResponseEntity<ProductResponseDTO> getProductDetail(@PathVariable Long id){
         return productService.findProductDetailById(id);
     }
 
     @PostMapping("/products/{id}/calc")
-    public ResponseEntity<PriceCalcResponseDTO> productPriceCalc(@PathVariable Long id,
+    public ResponseEntity<PriceCalcResponseDTO> getProductExpectedPrice(@PathVariable Long id,
                                                                 @RequestBody PriceCalcRequestDTO priceCalcRequestDTO) {
-        return productService.calcExceptedPrice(id, priceCalcRequestDTO.getGender(), priceCalcRequestDTO.getBirth());
+        return productService.findCalcExpectedPrice(id, priceCalcRequestDTO.getGender(), priceCalcRequestDTO.getBirth());
     }
 
 }
