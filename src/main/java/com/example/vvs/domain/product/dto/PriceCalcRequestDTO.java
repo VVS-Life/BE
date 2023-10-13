@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UserInsuranceInfoDTO {
+public class PriceCalcRequestDTO {
     private char gender;
     private String birth;
 
     @Builder
-    public UserInsuranceInfoDTO(char gender, String birth) {
+    public PriceCalcRequestDTO(char gender, String birth) {
         this.gender = gender;
         this.birth = birth;
     }
