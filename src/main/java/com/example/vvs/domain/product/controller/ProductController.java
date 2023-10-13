@@ -1,14 +1,13 @@
 package com.example.vvs.domain.product.controller;
 
-import com.example.vvs.domain.product.dto.ProductRequestDTO;
+import com.example.vvs.domain.product.dto.PriceCalcResponseDTO;
 import com.example.vvs.domain.product.dto.ProductResponseDTO;
-import com.example.vvs.domain.product.dto.UserInsuranceInfoDTO;
+import com.example.vvs.domain.product.dto.PriceCalcRequestDTO;
 import com.example.vvs.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -33,9 +32,9 @@ public class ProductController {
     }
 
     @PostMapping("/products/{id}/calc")
-    public ResponseEntity<Double> productPriceCalc(@PathVariable("id") Long id,
-                                                   @RequestBody UserInsuranceInfoDTO userInsuranceInfoDTO) {
-        return productService. calcExceptedPrice(id, userInsuranceInfoDTO.getGender(), userInsuranceInfoDTO.getBirth());
+    public ResponseEntity<PriceCalcResponseDTO> productPriceCalc(@PathVariable("id") Long id,
+                                                                @RequestBody PriceCalcRequestDTO priceCalcRequestDTO) {
+        return productService.calcExceptedPrice(id, priceCalcRequestDTO.getGender(), priceCalcRequestDTO.getBirth());
     }
 
 }

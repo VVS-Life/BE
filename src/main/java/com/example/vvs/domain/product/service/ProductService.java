@@ -1,14 +1,14 @@
 package com.example.vvs.domain.product.service;
 
 import com.example.vvs.domain.common.MessageDTO;
+import com.example.vvs.domain.product.dto.PriceCalcResponseDTO;
 import com.example.vvs.domain.product.dto.ProductRequestDTO;
 import com.example.vvs.domain.product.dto.ProductResponseDTO;
-import com.example.vvs.domain.product.dto.UserInsuranceInfoDTO;
+import com.example.vvs.domain.product.dto.PriceCalcRequestDTO;
 import com.example.vvs.domain.product.entity.Product;
 import com.example.vvs.domain.product.repository.ProductRepository;
 import com.example.vvs.exception.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,9 +131,9 @@ public class ProductService {
                 .build());
     }
 
-    public ResponseEntity<Double> calcExceptedPrice(Long id, char gender, String birth) {
+    public ResponseEntity<PriceCalcResponseDTO> calcExceptedPrice(Long id, char gender, String birth) {
 
-        Double price = productRepository.findPriceById(id);
+        Integer price = productRepository.findPriceById(id);
 
         if (price == 0) {
             throw new ApiException(IS_NULL);
@@ -141,27 +141,29 @@ public class ProductService {
 
         price = calcExcepPrice(gender, birth, price);
 
-        return ResponseEntity.ok(price);
+        PriceCalcResponseDTO priceCalcResponseDTO = PriceCalcResponseDTO.builder()
+                .price(price)
+                .build();
+
+        return ResponseEntity.ok(priceCalcResponseDTO);
     }
 
-    public Double calcExcepPrice(char gender, String birth, Double price) {
+    public Integer calcExcepPrice(char gender, String birth, Integer price) {
 
-        UserInsuranceInfoDTO userInsuranceInfoDTO = UserInsuranceInfoDTO.builder()
+        PriceCalcRequestDTO priceCalcRequestDTO = PriceCalcRequestDTO.builder()
                 .birth(birth)
                 .gender(gender)
                 .build();
 
-        Double womanDiscount = 1.0;
-        if(userInsuranceInfoDTO.getGender()=='여')
+        Double womanDiscount = 0.0;
+        if(priceCalcRequestDTO.getGender()=='W')
             womanDiscount = 0.1;
 
         //19910101
-        Integer age = Integer.valueOf(userInsuranceInfoDTO.getBirth().substring(0,4));
+        Integer age = Integer.valueOf(priceCalcRequestDTO.getBirth().substring(0,4));
 
-        Double finalPrice = price - price * womanDiscount + (2023-age)/10*price*0.18;
+        Integer totalPrice = price - (int)(price * womanDiscount + (2023-age)/10*price*0.18);
 
-
-
-        return finalPrice;
+        return totalPrice;
     }
 }
