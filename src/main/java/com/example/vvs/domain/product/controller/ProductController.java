@@ -2,6 +2,7 @@ package com.example.vvs.domain.product.controller;
 
 import com.example.vvs.domain.product.dto.ProductRequestDTO;
 import com.example.vvs.domain.product.dto.ProductResponseDTO;
+import com.example.vvs.domain.product.dto.UserInsuranceInfoDTO;
 import com.example.vvs.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,10 @@ public class ProductController {
         return productService.findProductDetailById(id);
     }
 
-//    @PostMapping("/products/{id}/calc")
-//    public ResponseEntity<ProductResponseDTO> productPriceCalc(@RequestBody char gender,
-//                                                               @RequestBody String birth) {
-//        return productService.calcExpectedPrice();
-//    }
+    @PostMapping("/products/{id}/calc")
+    public ResponseEntity<Double> productPriceCalc(@PathVariable("id") Long id,
+                                                   @RequestBody UserInsuranceInfoDTO userInsuranceInfoDTO) {
+        return productService. calcExceptedPrice(id, userInsuranceInfoDTO.getGender(), userInsuranceInfoDTO.getBirth());
+    }
+
 }

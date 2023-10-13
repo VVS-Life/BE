@@ -10,5 +10,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByOrderByIdDesc();
     List<Product> findAllByCategoryOrderByIdDesc(String category);
     @Query(value = "select price from Product  where id= :id")
-    int findPriceById(Long id);
+    Double findPriceById(Long id);
 }

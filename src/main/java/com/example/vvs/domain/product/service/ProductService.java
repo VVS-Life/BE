@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.vvs.exception.ErrorHandling.*;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -124,24 +125,43 @@ public class ProductService {
 
         productRepository.deleteById(id);
 
-        return ResponseEntity.ok(new MessageDTO("상품 삭제 완료", HttpStatus.OK));
+        return ResponseEntity.ok(MessageDTO.builder()
+                .message("상품 삭제 완료")
+                .httpStatus(OK)
+                .build());
     }
 
-//    public ResponseEntity<Integer> calcExceptedPrice(Long id) {
-//
-//        Product product = productRepository.findById(id).orElseThrow(
-//                () -> new ApiException(IS_NULL)
-//        );
-//
-//        return ResponseEntity.ok();
-//    }
+    public ResponseEntity<Double> calcExceptedPrice(Long id, char gender, String birth) {
 
-//    public int calcExcepPrice(UserInsuranceInfoDTO userInsuranceInfoDTO) {
-//
-//        int age = userInsuranceInfoDTO.
-//
-//        int price = price - price * 0.1 + int((2023-age)/10)*price*0.18;
-//
-//        return price;
-//    }
+        Double price = productRepository.findPriceById(id);
+
+        if (price == 0) {
+            throw new ApiException(IS_NULL);
+        }
+
+        price = calcExcepPrice(gender, birth, price);
+
+        return ResponseEntity.ok(price);
+    }
+
+    public Double calcExcepPrice(char gender, String birth, Double price) {
+
+        UserInsuranceInfoDTO userInsuranceInfoDTO = UserInsuranceInfoDTO.builder()
+                .birth(birth)
+                .gender(gender)
+                .build();
+
+        Double womanDiscount = 1.0;
+        if(userInsuranceInfoDTO.getGender()=='여')
+            womanDiscount = 0.1;
+
+        //19910101
+        Integer age = Integer.valueOf(userInsuranceInfoDTO.getBirth().substring(0,4));
+
+        Double finalPrice = price - price * womanDiscount + (2023-age)/10*price*0.18;
+
+
+
+        return finalPrice;
+    }
 }
