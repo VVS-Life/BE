@@ -36,8 +36,10 @@ public class ProductService {
 
         for (Product eachProduct : productList) {
             Product product = Product.builder()
+                    .id(eachProduct.getId())
                     .productName(eachProduct.getProductName())
                     .content(eachProduct.getContent())
+                    .guarantee(eachProduct.getGuarantee())
                     .price(eachProduct.getPrice())
                     .category(eachProduct.getCategory())
                     .build();
@@ -61,6 +63,7 @@ public class ProductService {
 
         for (Product eachProduct : productList) {
             Product product = Product.builder()
+                    .id(eachProduct.getId())
                     .productName(eachProduct.getProductName())
                     .content(eachProduct.getContent())
                     .price(eachProduct.getPrice())

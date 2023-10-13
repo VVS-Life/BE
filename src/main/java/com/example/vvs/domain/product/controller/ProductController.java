@@ -21,18 +21,18 @@ public class ProductController {
         return productService.findProductList();
     }
 
-    @GetMapping("/products?category={category}")
+    @GetMapping("/products/search")
     public ResponseEntity<List<ProductResponseDTO>> productList(@RequestParam String category){
         return productService.findProductListByCategory(category);
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ProductResponseDTO> productDetail(@RequestParam Long id){
+    public ResponseEntity<ProductResponseDTO> productDetail(@PathVariable Long id){
         return productService.findProductDetailById(id);
     }
 
     @PostMapping("/products/{id}/calc")
-    public ResponseEntity<PriceCalcResponseDTO> productPriceCalc(@PathVariable("id") Long id,
+    public ResponseEntity<PriceCalcResponseDTO> productPriceCalc(@PathVariable Long id,
                                                                 @RequestBody PriceCalcRequestDTO priceCalcRequestDTO) {
         return productService.calcExceptedPrice(id, priceCalcRequestDTO.getGender(), priceCalcRequestDTO.getBirth());
     }

@@ -1,7 +1,6 @@
 package com.example.vvs.domain.product.entity;
 
 import com.example.vvs.domain.product.dto.ProductRequestDTO;
-import com.example.vvs.domain.product.dto.ProductResponseDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +20,7 @@ public class Product {
     @Column(length = 50, nullable = false)
     private String productName;
 
-    @Column(length = 10, nullable = false)
+    @Column(nullable = false)
     private String content;
 
     @Column(length = 10, nullable = false)
@@ -34,7 +33,8 @@ public class Product {
     private String category;
 
     @Builder
-    public Product(String productName, String content, int guarantee, int price, String category) {
+    public Product(Long id, String productName, String content, int guarantee, int price, String category) {
+        this.id = id;
         this.productName = productName;
         this.content = content;
         this.guarantee = guarantee;
