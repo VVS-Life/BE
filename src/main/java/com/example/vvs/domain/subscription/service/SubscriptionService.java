@@ -1,5 +1,6 @@
 package com.example.vvs.domain.subscription.service;
 
+import com.example.vvs.domain.common.MessageDTO;
 import com.example.vvs.domain.member.entity.Member;
 import com.example.vvs.domain.member.repository.MemberRepository;
 import com.example.vvs.domain.subscription.dto.SubscriptionRequestDTO;
@@ -10,6 +11,8 @@ import com.example.vvs.exception.ApiException;
 import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,7 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
 
     @Transactional
-    public SubscriptionResponseDTO createSubscription(SubscriptionRequestDTO subscriptionRequestDTO) {
+    public ResponseEntity<SubscriptionResponseDTO> createSubscription(SubscriptionRequestDTO subscriptionRequestDTO) {
 
         Member member = memberRepository.findById(subscriptionRequestDTO.getMemberId()).orElseThrow(
                 () -> new ApiException(NOT_MATCH_USER)
@@ -38,9 +41,9 @@ public class SubscriptionService {
                                                                             .subscriptionRequestDTO(subscriptionRequestDTO)
                                                                             .member(member)
                                                                             .build());
-        return SubscriptionResponseDTO.builder()
+        return ResponseEntity.ok(SubscriptionResponseDTO.builder()
                                     .subscription(subscription)
-                                    .build();
+                                    .build());
     }
 
     public List<SubscriptionResponseDTO> findAllSubscription(Long memberId) {
@@ -61,4 +64,17 @@ public class SubscriptionService {
         return subscriptionResponseDTOList;
     }
 
+    @Transactional
+    public MessageDTO updateSubscription(Long id, SubscriptionRequestDTO subscriptionRequestDTO) {
+
+        Subscription subscription = subscriptionRepository.findById(id).orElseThrow(
+                () -> new ApiException(EMPTY_SUBSCRIPTION)
+        );
+
+        subscription.update(subscriptionRequestDTO);
+        return MessageDTO.builder()
+                .message("가입 승인이 완료되었습니다")
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
 }

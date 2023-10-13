@@ -3,17 +3,13 @@ package com.example.vvs.domain.subscription.entity;
 import com.example.vvs.domain.member.entity.Member;
 import com.example.vvs.domain.subscription.dto.SubscriptionRequestDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Calendar;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -65,5 +61,9 @@ public class Subscription {
         Timestamp timestamp = Timestamp.valueOf(joinDate.toLocalDateTime());
         timestamp.setTime(5);
         this.endDate = timestamp;
+    }
+
+    public void update(SubscriptionRequestDTO subscriptionRequestDTO) {
+        this.isApproval = subscriptionRequestDTO.getIsApproval();
     }
 }
