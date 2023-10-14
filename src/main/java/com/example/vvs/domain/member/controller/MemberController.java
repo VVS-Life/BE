@@ -23,4 +23,5 @@ public class MemberController {
     public MessageDTO postAdminLogin(MemberRequestDTO memberRequestDTO) {
         return memberService.loginAdmin(memberRequestDTO);
     }
+
 }
