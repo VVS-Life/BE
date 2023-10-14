@@ -1,6 +1,5 @@
 package com.example.vvs.domain.common;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -32,7 +31,7 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     private String uploadImageUrl;
-    private final AmazonS3 S3Client;
+    private final AmazonS3Client S3Client;
 
     public void uploadBoard(List<MultipartFile> multipartFilelist, BoardRequestDTO boardRequestDTO, Member member) throws IOException {
 
