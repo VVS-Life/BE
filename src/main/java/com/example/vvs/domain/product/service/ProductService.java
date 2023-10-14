@@ -130,7 +130,7 @@ public class ProductService {
 
         return ResponseEntity.ok(MessageDTO.builder()
                 .message("상품 삭제 완료")
-                .httpStatus(OK)
+                .statusCode(OK.value())
                 .build());
     }
 

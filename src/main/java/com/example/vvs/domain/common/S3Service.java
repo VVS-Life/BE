@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.vvs.domain.board.dto.BoardRequestDTO;
-import com.example.vvs.domain.board.entity.Board;
 import com.example.vvs.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class S3Service {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
-    private String uploadImageUrl;
+    private String uploadImageUrl = "";
     private final AmazonS3Client S3Client;
 
     public void uploadBoard(List<MultipartFile> multipartFilelist, BoardRequestDTO boardRequestDTO, Member member) throws IOException {
@@ -63,7 +62,7 @@ public class S3Service {
     private String boardUpload(File uploadFile) throws IOException {
 
         String fileName = "board" + "/" + UUID.randomUUID();
-        uploadImageUrl = putS3(uploadFile, fileName);
+        uploadImageUrl  += uploadImageUrl.equals("") ? putS3(uploadFile, fileName) : ", " + putS3(uploadFile, fileName) ;
         removeNewFile(uploadFile);
         return uploadImageUrl;
     }
