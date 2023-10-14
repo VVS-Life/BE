@@ -6,6 +6,7 @@ import com.example.vvs.domain.reply.dto.ReplyRequestDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply {
 
@@ -52,4 +54,9 @@ public class Reply {
         this.board = board;
     }
 
+    public void update(ReplyRequestDTO replyRequestDTO){
+        content = replyRequestDTO.getContent();
+        createdAt = replyRequestDTO.getCreatedAt();
+        modifiedAt = replyRequestDTO.getModifiedAt();
+    }
 }

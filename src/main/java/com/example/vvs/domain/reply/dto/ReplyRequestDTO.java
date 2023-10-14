@@ -1,9 +1,11 @@
 package com.example.vvs.domain.reply.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 
+@Getter
 public class ReplyRequestDTO {
     private String memberId;
     private String content;

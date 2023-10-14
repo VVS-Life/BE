@@ -1,5 +1,7 @@
 package com.example.vvs.domain.reply.dto;
 
+import com.example.vvs.domain.product.entity.Product;
+import com.example.vvs.domain.reply.entity.Reply;
 import lombok.Builder;
 
 import java.sql.Timestamp;
@@ -12,10 +14,10 @@ public class ReplyResponseDTO {
     private Timestamp modifiedAt;
 
     @Builder
-    public ReplyResponseDTO(Long id, String content, Timestamp createdAt, Timestamp modifiedAt) {
-        this.id = id;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+    public ReplyResponseDTO(Reply reply) {
+        this.id = reply.getId();
+        this.content = reply.getContent();
+        this.createdAt = reply.getCreatedAt();
+        this.modifiedAt = reply.getModifiedAt();
     }
 }
