@@ -2,7 +2,6 @@ package com.example.vvs.domain.member.service;
 
 import com.example.vvs.domain.common.MessageDTO;
 import com.example.vvs.domain.member.dto.MemberRequestDTO;
-import com.example.vvs.domain.member.dto.MemberResponseDTO;
 import com.example.vvs.domain.member.entity.Member;
 import com.example.vvs.domain.member.repository.MemberRepository;
 import com.example.vvs.exception.ApiException;
@@ -11,8 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.vvs.exception.ErrorHandling.NO_UNIQUE_EMAIL;
-import static com.example.vvs.exception.ErrorHandling.NO_UNIQUE_PHONENUMBER;
+import static com.example.vvs.exception.ErrorHandling.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +19,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public MessageDTO createMember(MemberRequestDTO memberRequestDTO) {
 
         if (memberRepository.existsByEmail(memberRequestDTO.getEmail())) {
@@ -45,7 +44,23 @@ public class MemberService {
 
         return MessageDTO.builder()
                 .message("회원 가입 완료")
-                .httpStatus(HttpStatus.ACCEPTED)
+                .statusCode(HttpStatus.OK.value())
+                .build();
+    }
+
+    @Transactional
+    public MessageDTO loginAdmin(MemberRequestDTO memberRequestDTO) {
+        Member member = memberRepository.findByAdminId(memberRequestDTO.getAdminId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_ADMIN_ID)
+        );
+
+        if (!member.getAdminPassword().equals(memberRequestDTO.getAdminPassword())) {
+            throw new ApiException(NOT_MATCH_PASSWORD);
+        }
+
+        return MessageDTO.builder()
+                .message("로그인 성공")
+                .statusCode(HttpStatus.OK.value())
                 .build();
     }
 }
