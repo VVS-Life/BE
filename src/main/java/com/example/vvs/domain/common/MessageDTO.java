@@ -8,11 +8,11 @@ import org.springframework.http.HttpStatus;
 public class MessageDTO {
 
     private String message;
-    private HttpStatus httpStatus;
+    private int statusCode;
 
     @Builder
-    public MessageDTO(String message, HttpStatus httpStatus) {
+    public MessageDTO(String message, int statusCode) {
         this.message = message;
-        this.httpStatus = httpStatus;
+        this.statusCode = statusCode;
     }
 }

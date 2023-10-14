@@ -1,10 +1,11 @@
 package com.example.vvs.domain.member.entity;
 
+import com.example.vvs.domain.member.dto.MemberRequestDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -35,12 +36,14 @@ public class Member {
     @Column(length = 13, nullable = false)
     private String phoneNumber;
     @Column(length = 8, nullable = false)
-    @ColumnDefault("member")
+    @ColumnDefault("\"member\"")
     private String role;
 
     @Builder
-    public Member(String userName, String birth, String email, String address,
-                  String gender, String phoneNumber, String role) {
+    public Member(String adminId, String adminPassword, String userName, String birth, String email,
+                  String address, String gender, String phoneNumber, String role) {
+        this.adminId = adminId;
+        this.adminPassword = adminPassword;
         this.userName = userName;
         this.birth = birth;
         this.email = email;
@@ -49,4 +52,5 @@ public class Member {
         this.phoneNumber = phoneNumber;
         this.role = role;
     }
+
 }
