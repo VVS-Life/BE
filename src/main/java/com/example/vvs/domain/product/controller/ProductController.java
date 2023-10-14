@@ -32,7 +32,7 @@ public class ProductController {
     }
 
     @PostMapping("/products/{id}/calc")
-    public ResponseEntity<PriceCalcResponseDTO> getProductExpectedPrice(@PathVariable Long id,
+    public ResponseEntity<PriceCalcResponseDTO> postProductExpectedPrice(@PathVariable Long id,
                                                                 @RequestBody PriceCalcRequestDTO priceCalcRequestDTO) {
         return productService.findCalcExpectedPrice(id, priceCalcRequestDTO.getGender(), priceCalcRequestDTO.getBirth());
     }
