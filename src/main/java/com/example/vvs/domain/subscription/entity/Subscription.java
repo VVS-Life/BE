@@ -41,10 +41,10 @@ public class Subscription {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp endDate;
 
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
     @Builder
     public Subscription(SubscriptionRequestDTO subscriptionRequestDTO, Member member) {
         this.period = subscriptionRequestDTO.getPeriod();
