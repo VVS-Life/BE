@@ -13,7 +13,8 @@ public enum ErrorHandling {
     NO_UNIQUE_ADMIN_ID(HttpStatus.BAD_REQUEST, "입력하신 ID는 이미 존재하는 ID입니다"),
     NOT_FOUND_ADMIN_ID(HttpStatus.BAD_REQUEST, "해당 ID는 존재하지 않습니다"),
     NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다"),
-    NOT_MATCH_USER(HttpStatus.BAD_REQUEST, "일치하는 사용자가 없습니다");
+    NOT_MATCH_USER(HttpStatus.BAD_REQUEST, "일치하는 사용자가 없습니다"),
+    NOT_MATCH_AUTHORIZTION(HttpStatus.BAD_REQUEST, "작성자만 수정이 가능합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
