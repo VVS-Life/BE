@@ -11,6 +11,7 @@ import com.example.vvs.domain.reply.entity.Reply;
 import com.example.vvs.domain.reply.repository.ReplyRepository;
 import com.example.vvs.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,9 +58,9 @@ public class ReplyService {
     }
 
     @Transactional
-    public ResponseEntity<ReplyResponseDTO> createReply(ReplyRequestDTO replyRequestDTO, Long memberId, Long boardId){
+    public ResponseEntity<MessageDTO> createReply(ReplyRequestDTO replyRequestDTO, Long boardId){
 
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findById(replyRequestDTO.getMemberId())
                 .orElseThrow(
                         ()->new ApiException(NOT_MATCH_USER)
                 );
@@ -78,15 +79,20 @@ public class ReplyService {
 
         replyRepository.save(reply);
 
-        ReplyResponseDTO replyResponseDTO = ReplyResponseDTO.builder().reply(reply).build();
-
-        return ResponseEntity.ok(replyResponseDTO);
+        return ResponseEntity.ok(MessageDTO.builder()
+                .message("답글 등록 완료")
+                .statusCode(HttpStatus.OK.value())
+                .build());
     }
 
     @Transactional
-    public ResponseEntity<ReplyResponseDTO> updateReply(Long id, ReplyRequestDTO replyRequestDTO){
+    public ResponseEntity<ReplyResponseDTO> updateReply(Long boardId, Long replyId, ReplyRequestDTO replyRequestDTO){
 
-        Reply reply = replyRepository.findById(id).orElseThrow(
+        boardRepository.findById(boardId).orElseThrow(
+                ()-> new ApiException(NOT_FOUND_BOARD_ID)
+        );
+
+        Reply reply = replyRepository.findById(replyId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_REPLY)
         );
 
@@ -98,13 +104,17 @@ public class ReplyService {
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> deleteReply(Long id){
+    public ResponseEntity<MessageDTO> deleteReply(Long boardId, Long replyId){
 
-        replyRepository.findById(id).orElseThrow(
+        boardRepository.findById(boardId).orElseThrow(
+                ()-> new ApiException(NOT_FOUND_BOARD_ID)
+        );
+
+        replyRepository.findById(replyId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_REPLY)
         );
 
-        replyRepository.deleteById(id);
+        replyRepository.deleteById(replyId);
 
         return ResponseEntity.ok(MessageDTO.builder()
                 .message("답글 삭제 완료")
