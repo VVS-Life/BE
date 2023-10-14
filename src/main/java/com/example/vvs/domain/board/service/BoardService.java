@@ -5,11 +5,10 @@ import com.example.vvs.domain.board.dto.BoardResponseDTO;
 import com.example.vvs.domain.board.entity.Board;
 import com.example.vvs.domain.board.repository.BoardRepository;
 import com.example.vvs.domain.common.MessageDTO;
-import com.example.vvs.domain.common.S3Service;
+import com.example.vvs.domain.common.s3.S3Service;
 import com.example.vvs.domain.member.entity.Member;
 import com.example.vvs.domain.member.repository.MemberRepository;
 import com.example.vvs.exception.ApiException;
-import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,7 +47,7 @@ public class BoardService {
             if (multipartFile.getOriginalFilename().equals("")) {
                 boardRepository.save(Board.builder()
                         .boardRequestDTO(boardRequestDTO)
-                        .img(null)
+                        .image(null)
                         .member(member)
                         .build());
                 //Diary diary = diaryRepository.save(Diary.of(diaryRequestDto, null, member));
@@ -75,7 +74,7 @@ public class BoardService {
 
         Board board = boardRepository.save(boardRepository.save(Board.builder()
                 .boardRequestDTO(boardRequestDTO)
-                .img(uploadImageUrl)
+                .image(uploadImageUrl)
                 .member(member)
                 .build()));
 
@@ -126,6 +125,16 @@ public class BoardService {
                 .orElseThrow(
                         NullPointerException::new
                 );
+
+        // S3 업로드 파일 삭제
+        if (board.getImage() != null) {
+            String uploadPath = board.getImage(); // "url1, url2,,," 형식으로 구성.
+            String[] fileNames = uploadPath.split(","); //콤마로 구분하여 각각 삭제시켜줘야함.
+            for (String fileName : fileNames) { // 파일 하나씩 삭제
+                s3Service.deleteFile(fileName.substring(57)); // 삭제할 때 url이 아닌 name을 줘야하기 때문에 url 앞의 57글자를 삭제시켜 이후의 name만 가져다 쓰도록 substring을 사용.
+                System.out.println(fileName.substring(57));
+            }
+        }
 
         // TODO: 2023/10/14  작성자 객체 대신 일단 id만
         if (!board.getMember().getId().equals(1L)) {
