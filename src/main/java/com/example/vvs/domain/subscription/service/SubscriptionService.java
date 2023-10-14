@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.vvs.exception.ErrorHandling.*;
+import static com.example.vvs.exception.ErrorHandling.EMPTY_SUBSCRIPTION;
+import static com.example.vvs.exception.ErrorHandling.NOT_MATCH_USER;
 
 @Slf4j
 @Service
@@ -72,9 +73,10 @@ public class SubscriptionService {
         );
 
         subscription.update(subscriptionRequestDTO);
+
         return MessageDTO.builder()
                 .message("가입 승인이 완료되었습니다")
-                .httpStatus(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
                 .build();
     }
 }
