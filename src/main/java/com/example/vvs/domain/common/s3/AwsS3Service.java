@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.vvs.exception.ApiException;
+import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.vvs.exception.ErrorHandling.FILE_CONVERSION_FAILURE;
-import static com.example.vvs.exception.ErrorHandling.FILE_NOT_FOUND;
+import static com.example.vvs.exception.ErrorHandling.*;
 
 @Service
 @RequiredArgsConstructor
