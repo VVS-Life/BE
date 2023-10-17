@@ -19,8 +19,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public MessageDTO postMember(@Valid @RequestBody JoinRequestDTO memberRequestDTO) {
-        return memberService.createMember(memberRequestDTO);
+    public MessageDTO postMember(@Valid @RequestBody JoinRequestDTO joinRequestDTO) {
+        return memberService.createMember(joinRequestDTO);
     }
 
     @PostMapping("/login/member")
