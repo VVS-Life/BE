@@ -1,18 +1,22 @@
 package com.example.vvs.domain.member.service;
 
+import com.example.vvs.domain.auth.JwtUtil;
 import com.example.vvs.domain.common.MessageDTO;
-import com.example.vvs.domain.member.dto.MemberRequestDTO;
-import com.example.vvs.domain.member.dto.MemberResponseDTO;
+import com.example.vvs.domain.member.dto.JoinRequestDTO;
+import com.example.vvs.domain.member.dto.LoginRequestDTO;
 import com.example.vvs.domain.member.entity.Member;
 import com.example.vvs.domain.member.repository.MemberRepository;
 import com.example.vvs.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.vvs.exception.ErrorHandling.NO_UNIQUE_EMAIL;
-import static com.example.vvs.exception.ErrorHandling.NO_UNIQUE_PHONENUMBER;
+import javax.servlet.http.HttpServletResponse;
+
+import static com.example.vvs.exception.ErrorHandling.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,32 +24,75 @@ import static com.example.vvs.exception.ErrorHandling.NO_UNIQUE_PHONENUMBER;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    public MessageDTO createMember(MemberRequestDTO memberRequestDTO) {
+    @Transactional
+    public MessageDTO createMember(JoinRequestDTO joinRequestDTO) {
 
-        if (memberRepository.existsByEmail(memberRequestDTO.getEmail())) {
-            throw new ApiException(NO_UNIQUE_EMAIL);
+        String encodePassword = passwordEncoder.encode(joinRequestDTO.getJoinPassword());
+
+        if (memberRepository.existsByLoginId(joinRequestDTO.getJoinId())) {
+            throw new ApiException(NO_UNIQUE_LOGIN_ID);
         }
 
-        if (memberRepository.existsByPhoneNumber(memberRequestDTO.getPhoneNumber())) {
+        if (memberRepository.existsByPhoneNumber(joinRequestDTO.getPhoneNumber())) {
             throw new ApiException(NO_UNIQUE_PHONENUMBER);
         }
 
+        String role = joinRequestDTO.getRole() == null ? "MEMBER" : joinRequestDTO.getRole();
+        if (!(role.equals("MEMBER") || role.equals("ADMIN"))) {
+            throw new ApiException(NOT_EXISTENCE_ROLE);
+        }
+
         Member member = Member.builder()
-                .userName(memberRequestDTO.getUserName())
-                .birth(memberRequestDTO.getBirth())
-                .email(memberRequestDTO.getEmail())
-                .address(memberRequestDTO.getAddress())
-                .gender(memberRequestDTO.getGender())
-                .phoneNumber(memberRequestDTO.getPhoneNumber())
-                .role(memberRequestDTO.getRole())
+                .joinRequestDTO(joinRequestDTO)
+                .encodePassword(encodePassword)
+                .role(role)
                 .build();
 
         memberRepository.save(member);
 
         return MessageDTO.builder()
                 .message("회원 가입 완료")
-                .httpStatus(HttpStatus.ACCEPTED)
+                .statusCode(HttpStatus.ACCEPTED.value())
+                .build();
+    }
+
+    @Transactional
+    public MessageDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+        Member member = memberRepository.findByLoginId(loginRequestDTO.getLoginId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_ADMIN_ID)
+        );
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(loginRequestDTO.getLoginPassword(), member.getLoginPassword())) {
+            throw new ApiException(NOT_MATCH_PASSWORD);
+        }
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getLoginId(), member.getRole()));
+
+        return MessageDTO.builder()
+                .message("로그인 성공")
+                .statusCode(HttpStatus.OK.value())
+                .build();
+    }
+
+    @Transactional
+    public MessageDTO adminLogin(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+        Member member = memberRepository.findByLoginId(loginRequestDTO.getLoginId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_ADMIN_ID)
+        );
+
+        if (!loginRequestDTO.getLoginPassword().equals("admin")) {
+            throw new ApiException(NOT_MATCH_PASSWORD);
+        }
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getLoginId(), member.getRole()));
+
+        return MessageDTO.builder()
+                .message("로그인 성공")
+                .statusCode(HttpStatus.OK.value())
                 .build();
     }
 }

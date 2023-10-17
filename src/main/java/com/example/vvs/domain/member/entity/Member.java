@@ -1,5 +1,6 @@
 package com.example.vvs.domain.member.entity;
 
+import com.example.vvs.domain.member.dto.JoinRequestDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +19,10 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20)
-    private String adminId;
-    @Column(length = 20)
-    private String adminPassword;
+    @Column(length = 20, nullable = false)
+    private String loginId;
+    @Column(nullable = false)
+    private String loginPassword;
     @Column(length = 10, nullable = false)
     private String userName;
     @Column(length = 10, nullable = false)
@@ -35,18 +36,20 @@ public class Member {
     @Column(length = 13, nullable = false)
     private String phoneNumber;
     @Column(length = 8, nullable = false)
-    @ColumnDefault("member")
+    @ColumnDefault("\"member\"")
     private String role;
 
     @Builder
-    public Member(String userName, String birth, String email, String address,
-                  String gender, String phoneNumber, String role) {
-        this.userName = userName;
-        this.birth = birth;
-        this.email = email;
-        this.address = address;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
+    public Member(JoinRequestDTO joinRequestDTO, String encodePassword, String role) {
+        this.loginId = joinRequestDTO.getJoinId();
+        this.loginPassword = encodePassword;
+        this.userName = joinRequestDTO.getUserName();
+        this.birth = joinRequestDTO.getBirth();
+        this.email = joinRequestDTO.getEmail();
+        this.address = joinRequestDTO.getAddress();
+        this.gender = joinRequestDTO.getGender();
+        this.phoneNumber = joinRequestDTO.getPhoneNumber();
         this.role = role;
     }
+
 }
