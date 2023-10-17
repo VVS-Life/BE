@@ -15,9 +15,9 @@ public class MemberDetailsServiceImpl implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String nickName) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findByLoginId(loginId).orElseThrow(
+        Member member = memberRepository.findByNickname(nickName).orElseThrow(
                 () -> new UsernameNotFoundException("사용자를 찾을수 없습니다.")
         );
 
