@@ -1,6 +1,7 @@
 package com.example.vvs.domain.subscription.controller;
 
 import com.example.vvs.domain.common.MessageDTO;
+import com.example.vvs.domain.security.MemberDetailsImpl;
 import com.example.vvs.domain.subscription.dto.SubscriptionRequestDTO;
 import com.example.vvs.domain.subscription.dto.SubscriptionResponseDTO;
 import com.example.vvs.domain.subscription.service.SubscriptionService;
