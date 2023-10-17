@@ -48,7 +48,7 @@ public class BoardService {
             if (multipartFile.getOriginalFilename().equals("")) {
                 boardRepository.save(Board.builder()
                         .boardRequestDTO(boardRequestDTO)
-                        .img(null)
+                        .image(null)
                         .member(member)
                         .build());
                 //Diary diary = diaryRepository.save(Diary.of(diaryRequestDto, null, member));
@@ -75,7 +75,7 @@ public class BoardService {
 
         Board board = boardRepository.save(boardRepository.save(Board.builder()
                 .boardRequestDTO(boardRequestDTO)
-                .img(uploadImageUrl)
+                .image(uploadImageUrl)
                 .member(member)
                 .build()));
 
