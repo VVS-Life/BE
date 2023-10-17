@@ -61,11 +61,13 @@ public class MemberService {
 
     @Transactional
     public MessageDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+      
         Member member = memberRepository.findByNickname(loginRequestDTO.getNickname()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
         );
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
         if (!encoder.matches(loginRequestDTO.getPassword(), member.getPassword())) {
             throw new ApiException(NOT_MATCH_PASSWORD);
         }
@@ -80,15 +82,17 @@ public class MemberService {
 
     @Transactional
     public MessageDTO adminLogin(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+
         Member member = memberRepository.findByNickname(loginRequestDTO.getNickname()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
         );
 
-        if (!loginRequestDTO.getPassword().equals("admin")) {
+        if (!loginRequestDTO.getPassword().equals("ADMIN")) {
             throw new ApiException(NOT_MATCH_PASSWORD);
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getNickname(), member.getRole()));
+
 
         return MessageDTO.builder()
                 .message("로그인 성공")
