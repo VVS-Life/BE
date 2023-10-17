@@ -19,34 +19,35 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-    @PostMapping("/subscription")
-    public ResponseEntity<SubscriptionResponseDTO> postSubscription(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
+    @PostMapping("/product/{product-id}/subscription")
+    public ResponseEntity<SubscriptionResponseDTO> postSubscription(@PathVariable("product-id") Long productId,
+                                                                    @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
                                                                     @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
-        return subscriptionService.createSubscription(subscriptionRequestDTO, memberDetails.getMember());
+        return subscriptionService.createSubscription(productId, subscriptionRequestDTO, memberDetails.getMember());
     }
 
     @GetMapping("/subscription/{subscription-id}")
-    public SubscriptionResponseDTO getSubscription(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                   @PathVariable("subscription-id") Long subscriptionId) {
+    public ResponseEntity<SubscriptionResponseDTO> getSubscription(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                                                   @PathVariable("subscription-id") Long subscriptionId) {
         return subscriptionService.findSubscription(memberDetails.getMember(), subscriptionId);
     }
 
     @GetMapping("/subscription")
-    public Page<SubscriptionResponseDTO> getSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                             @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<SubscriptionResponseDTO>> getSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                                                             @PageableDefault Pageable pageable) {
         return subscriptionService.findAllSubscriptionPage(memberDetails.getMember().getId(), pageable);
     }
 
     @GetMapping("/subscription/admin")
-    public Page<SubscriptionResponseDTO> getAdminSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                                  @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<SubscriptionResponseDTO>> getAdminSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                                                                  @PageableDefault Pageable pageable) {
         return subscriptionService.findAllSubscriptionAdminPage(memberDetails.getMember(), pageable);
     }
 
     @PatchMapping("/subscription/admin/{subscription-id}")
-    public MessageDTO updateSubscription(@PathVariable("subscription-id") Long id,
-                                         @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
-                                         @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+    public ResponseEntity<MessageDTO> updateSubscription(@PathVariable("subscription-id") Long id,
+                                                         @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
+                                                         @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         return subscriptionService.updateSubscription(id, subscriptionRequestDTO, memberDetails.getMember());
     }
 }

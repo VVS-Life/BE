@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.vvs.exception.ErrorHandling.IS_EMPTY_LIST;
-import static com.example.vvs.exception.ErrorHandling.IS_NULL;
+import static com.example.vvs.exception.ErrorHandling.NOT_FOUND_PRODUCT;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
