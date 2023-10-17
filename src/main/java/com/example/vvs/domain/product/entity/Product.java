@@ -42,7 +42,7 @@ public class Product {
         this.category = category;
     }
 
-    public void update(ProductRequestDTO productRequestDTO){
+    public void update(ProductRequestDTO productRequestDTO) {
         productName = productRequestDTO.getProductName();
         content = productRequestDTO.getContent();
         price = productRequestDTO.getPrice();
