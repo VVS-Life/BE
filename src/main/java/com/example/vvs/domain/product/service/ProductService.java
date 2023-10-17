@@ -1,10 +1,10 @@
 package com.example.vvs.domain.product.service;
 
 import com.example.vvs.domain.common.MessageDTO;
-import com.example.vvs.domain.product.dto.PriceCalcRequestDTO;
 import com.example.vvs.domain.product.dto.PriceCalcResponseDTO;
 import com.example.vvs.domain.product.dto.ProductRequestDTO;
 import com.example.vvs.domain.product.dto.ProductResponseDTO;
+import com.example.vvs.domain.product.dto.PriceCalcRequestDTO;
 import com.example.vvs.domain.product.entity.Product;
 import com.example.vvs.domain.product.repository.ProductRepository;
 import com.example.vvs.exception.ApiException;
@@ -16,9 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.vvs.exception.ErrorHandling.IS_EMPTY_LIST;
-import static com.example.vvs.exception.ErrorHandling.IS_NULL;
-import static org.springframework.http.HttpStatus.OK;
+import static com.example.vvs.exception.ErrorHandling.*;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class ProductService {
         List<ProductResponseDTO> dtoList = new ArrayList<>();
 
         if (productList.isEmpty()) {
-            throw new ApiException(IS_EMPTY_LIST);
+            throw  new ApiException(IS_EMPTY_LIST);
         }
 
         for (Product eachProduct : productList) {
@@ -90,7 +89,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO){
 
         Product product = Product.builder()
                 .productName(productRequestDTO.getProductName())
@@ -107,7 +106,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO productRequestDTO){
 
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new ApiException(IS_NULL)
@@ -121,7 +120,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> deleteProduct(Long id) {
+    public ResponseEntity<MessageDTO> deleteProduct(Long id){
 
         productRepository.findById(id).orElseThrow(
                 () -> new ApiException(IS_NULL)
@@ -160,13 +159,13 @@ public class ProductService {
                 .build();
 
         Double womanDiscount = 0.0;
-        if (priceCalcRequestDTO.getGender() == 'W')
+        if(priceCalcRequestDTO.getGender()=='W')
             womanDiscount = 0.1;
 
         //19910101
-        Integer age = Integer.valueOf(priceCalcRequestDTO.getBirth().substring(0, 4));
+        Integer age = Integer.valueOf(priceCalcRequestDTO.getBirth().substring(0,4));
 
-        Integer totalPrice = price - (int) (price * womanDiscount + (2023 - age) / 10 * price * 0.18);
+        Integer totalPrice = price - (int)(price * womanDiscount + (2023-age)/10*price*0.18);
 
         return totalPrice;
     }

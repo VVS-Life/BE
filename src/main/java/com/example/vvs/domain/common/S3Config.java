@@ -1,4 +1,4 @@
-package com.example.vvs.domain.common.s3;
+package com.example.vvs.domain.common;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

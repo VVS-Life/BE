@@ -5,10 +5,11 @@ import com.example.vvs.domain.board.dto.BoardResponseDTO;
 import com.example.vvs.domain.board.entity.Board;
 import com.example.vvs.domain.board.repository.BoardRepository;
 import com.example.vvs.domain.common.MessageDTO;
-import com.example.vvs.domain.common.s3.S3Service;
+import com.example.vvs.domain.common.S3Service;
 import com.example.vvs.domain.member.entity.Member;
 import com.example.vvs.domain.member.repository.MemberRepository;
 import com.example.vvs.exception.ApiException;
+import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static com.example.vvs.exception.ErrorHandling.NOT_MATCH_AUTHORIZTION;
+import static com.example.vvs.exception.ErrorHandling.*; // add on demand
 
 
 @Service // 스프링빈 등록
@@ -47,7 +48,7 @@ public class BoardService {
             if (multipartFile.getOriginalFilename().equals("")) {
                 boardRepository.save(Board.builder()
                         .boardRequestDTO(boardRequestDTO)
-                        .image(null)
+                        .img(null)
                         .member(member)
                         .build());
                 //Diary diary = diaryRepository.save(Diary.of(diaryRequestDto, null, member));
@@ -74,7 +75,7 @@ public class BoardService {
 
         Board board = boardRepository.save(boardRepository.save(Board.builder()
                 .boardRequestDTO(boardRequestDTO)
-                .image(uploadImageUrl)
+                .img(uploadImageUrl)
                 .member(member)
                 .build()));
 

@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 @Getter
 public class SubscriptionResponseDTO {
 
-    private Long id;
     private int period;
     private int insFee;
     private String isApproval;
@@ -20,7 +19,6 @@ public class SubscriptionResponseDTO {
 
     @Builder
     public SubscriptionResponseDTO(Subscription subscription) {
-        this.id = subscription.getId();
         this.period = subscription.getPeriod();
         this.insFee = subscription.getInsFee();
         this.isApproval = subscription.getIsApproval();

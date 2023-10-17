@@ -23,16 +23,16 @@ import static com.example.vvs.exception.ErrorHandling.*;
 @Transactional(readOnly = true)
 public class MemberService {
 
-    private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public MessageDTO createMember(JoinRequestDTO joinRequestDTO) {
 
-        String encodePassword = passwordEncoder.encode(joinRequestDTO.getPassword());
+        String encodePassword = passwordEncoder.encode(joinRequestDTO.getJoinPassword());
 
-        if (memberRepository.existsByNickname(joinRequestDTO.getNickname())) {
+        if (memberRepository.existsByLoginId(joinRequestDTO.getJoinId())) {
             throw new ApiException(NO_UNIQUE_LOGIN_ID);
         }
 
@@ -61,18 +61,16 @@ public class MemberService {
 
     @Transactional
     public MessageDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
-      
-        Member member = memberRepository.findByNickname(loginRequestDTO.getNickname()).orElseThrow(
+        Member member = memberRepository.findByLoginId(loginRequestDTO.getLoginId()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
         );
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        if (!encoder.matches(loginRequestDTO.getPassword(), member.getPassword())) {
+        if (!encoder.matches(loginRequestDTO.getLoginPassword(), member.getLoginPassword())) {
             throw new ApiException(NOT_MATCH_PASSWORD);
         }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getNickname(), member.getRole()));
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getLoginId(), member.getRole()));
 
         return MessageDTO.builder()
                 .message("로그인 성공")
@@ -82,17 +80,15 @@ public class MemberService {
 
     @Transactional
     public MessageDTO adminLogin(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
-
-        Member member = memberRepository.findByNickname(loginRequestDTO.getNickname()).orElseThrow(
+        Member member = memberRepository.findByLoginId(loginRequestDTO.getLoginId()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
         );
 
-        if (!loginRequestDTO.getPassword().equals("ADMIN")) {
+        if (!loginRequestDTO.getLoginPassword().equals("admin")) {
             throw new ApiException(NOT_MATCH_PASSWORD);
         }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getNickname(), member.getRole()));
-
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getLoginId(), member.getRole()));
 
         return MessageDTO.builder()
                 .message("로그인 성공")

@@ -20,9 +20,9 @@ public class Member {
     private Long id;
 
     @Column(length = 20, nullable = false)
-    private String nickname;
+    private String loginId;
     @Column(nullable = false)
-    private String password;
+    private String loginPassword;
     @Column(length = 10, nullable = false)
     private String userName;
     @Column(length = 10, nullable = false)
@@ -41,8 +41,8 @@ public class Member {
 
     @Builder
     public Member(JoinRequestDTO joinRequestDTO, String encodePassword, String role) {
-        this.nickname = joinRequestDTO.getNickname();
-        this.password = encodePassword;
+        this.loginId = joinRequestDTO.getJoinId();
+        this.loginPassword = encodePassword;
         this.userName = joinRequestDTO.getUserName();
         this.birth = joinRequestDTO.getBirth();
         this.email = joinRequestDTO.getEmail();

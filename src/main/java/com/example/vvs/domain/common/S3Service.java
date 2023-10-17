@@ -1,4 +1,4 @@
-package com.example.vvs.domain.common.s3;
+package com.example.vvs.domain.common;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;

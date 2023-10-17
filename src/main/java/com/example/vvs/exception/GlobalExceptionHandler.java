@@ -28,7 +28,7 @@ public class GlobalExceptionHandler extends RuntimeException {
         return ErrorResponseDTO
                 .builder()
                 .errorMessage(message)
-                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .errorCode(HttpStatus.BAD_REQUEST)
                 .build();
     }
 

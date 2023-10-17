@@ -2,8 +2,11 @@ package com.example.vvs.domain.board.controller;
 
 import com.example.vvs.domain.board.dto.BoardRequestDTO;
 import com.example.vvs.domain.board.dto.BoardResponseDTO;
+import com.example.vvs.domain.board.repository.BoardRepository;
 import com.example.vvs.domain.board.service.BoardService;
 import com.example.vvs.domain.common.MessageDTO;
+import com.example.vvs.domain.member.entity.Member;
+import com.example.vvs.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +22,8 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService; // 이거 왜 final로 만들지? RequiredArgsConstructor가 인식해서 의존성 주입해줄 수 있도록!
+    private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     // 게시글 등록
     @PostMapping("/board/{member-id}")
@@ -31,8 +36,7 @@ public class BoardController {
 
     // 게시판 전체 조회
     @GetMapping("/board") // /board?page=1&size=10
-    public Page<BoardResponseDTO> getBoard(@RequestParam("page") Integer page,
-                                           @RequestParam("size") Integer size) {
+    public Page<BoardResponseDTO> getBoard(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return boardService.findAllBoard(pageRequest);
     }

@@ -10,14 +10,14 @@ import javax.validation.constraints.Size;
 public class LoginRequestDTO {
 
     @Size(min = 6, max = 20, message = "ID는 6~20자리 사이로 입력하세요")
-    private String nickname;
+    private String loginId;
     @Size(min = 8, max = 20, message = "비밀번호는 8~20자리 사이로 입력하세요")
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,20}", message = "비밀번호는 8~20자 영문 대 소문자, 숫자, 특수문자를 사용하세요")
-    private String password;
+    private String loginPassword;
 
     @Builder
-    public LoginRequestDTO(String nickname, String password) {
-        this.nickname = nickname;
-        this.password = password;
+    public LoginRequestDTO(String loginId, String loginPassword) {
+        this.loginId = loginId;
+        this.loginPassword = loginPassword;
     }
 }
