@@ -54,7 +54,7 @@ public class Board {
     // BoardRequestDTO가 json형식의 데이터를 받았으면
     // Board 객체의 생성자를 통해서 Board객체를 만들어준다.
     @Builder
-    public Board(BoardRequestDTO boardRequestDTO, String image , Member member) {
+    public Board(BoardRequestDTO boardRequestDTO, String image, Member member) {
         this.title = boardRequestDTO.getTitle();
         this.content = boardRequestDTO.getContent();
         this.isAnswer = boardRequestDTO.getIsAnswer(); // 등록시 얘는 null이지만 DB에는 디폴트값인 "답변 대기"로 들어간다.
