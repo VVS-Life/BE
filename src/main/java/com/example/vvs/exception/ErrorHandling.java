@@ -21,7 +21,8 @@ public enum ErrorHandling {
     FILE_CONVERSION_FAILURE(HttpStatus.BAD_REQUEST.value(), "파일 변환에 실패했습니다"),
     FILE_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "파일을 찾을 수 없습니다"),
     INVALID_ADMIN_TOKEN(HttpStatus.FORBIDDEN.value(), "유효하지 않은 ADMIN 토큰입니다"),
-    NOT_EXISTENCE_ROLE(HttpStatus.BAD_REQUEST.value(), "존재하지 않는 권한입니다");
+    NOT_EXISTENCE_ROLE(HttpStatus.BAD_REQUEST.value(), "존재하지 않는 권한입니다"),
+    NO_UNIQUE_NICKNAME(HttpStatus.BAD_REQUEST.value(), "이미 존재하는 ID입니다");
 
     private final int statusCode;
     private final String message;
