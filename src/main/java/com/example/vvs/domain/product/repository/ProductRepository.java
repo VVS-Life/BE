@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByOrderByIdDesc();
+
     List<Product> findAllByCategoryOrderByIdDesc(String category);
+
     @Query(value = "select price from Product  where id= :id")
     Integer findPriceById(Long id);
 }

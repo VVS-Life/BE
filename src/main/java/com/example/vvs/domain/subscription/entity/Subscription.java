@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -41,14 +41,13 @@ public class Subscription {
     @CreatedDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp joinDate;
-    @CreatedDate()
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp endDate;
-
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @Builder
     public Subscription(SubscriptionRequestDTO subscriptionRequestDTO, Member member) {
         this.period = subscriptionRequestDTO.getPeriod();
@@ -58,13 +57,15 @@ public class Subscription {
         this.applyDate = subscriptionRequestDTO.getApplyDate();
         this.joinDate = subscriptionRequestDTO.getJoinDate();
         this.member = member;
-        setEndDate();
+        this.endDate = setEndDate();
     }
 
+    public Timestamp setEndDate() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        return Timestamp.valueOf(localDateTime.plusYears(5));
+    }
 
-    public void setEndDate() {
-        Timestamp timestamp = Timestamp.valueOf(joinDate.toLocalDateTime());
-        timestamp.setTime(5);
-        this.endDate = timestamp;
+    public void update(SubscriptionRequestDTO subscriptionRequestDTO) {
+        this.isApproval = subscriptionRequestDTO.getIsApproval();
     }
 }

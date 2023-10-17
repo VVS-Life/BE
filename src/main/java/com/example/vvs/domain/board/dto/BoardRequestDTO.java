@@ -1,11 +1,8 @@
 package com.example.vvs.domain.board.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Column;
 import java.sql.Timestamp;
 
 @Getter
