@@ -40,7 +40,7 @@ public class MemberService {
             throw new ApiException(NO_UNIQUE_PHONENUMBER);
         }
 
-        String role = "Member";
+        String role = "MEMBER";
 
         Member member = Member.builder()
                 .joinRequestDTO(joinRequestDTO)
@@ -69,7 +69,7 @@ public class MemberService {
             throw new ApiException(NO_UNIQUE_PHONENUMBER);
         }
 
-        String role = "Admin";
+        String role = "ADMIN";
 
         Member member = Member.builder()
                 .joinRequestDTO(joinRequestDTO)
