@@ -1,11 +1,11 @@
 package com.example.vvs.domain.member.entity;
 
-import com.example.vvs.domain.member.dto.MemberRequestDTO;
+import com.example.vvs.domain.member.dto.JoinRequestDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -19,10 +19,10 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20)
-    private String adminId;
-    @Column(length = 20)
-    private String adminPassword;
+    @Column(length = 20, nullable = false)
+    private String nickname;
+    @Column(nullable = false)
+    private String password;
     @Column(length = 10, nullable = false)
     private String userName;
     @Column(length = 10, nullable = false)
@@ -40,16 +40,15 @@ public class Member {
     private String role;
 
     @Builder
-    public Member(String adminId, String adminPassword, String userName, String birth, String email,
-                  String address, String gender, String phoneNumber, String role) {
-        this.adminId = adminId;
-        this.adminPassword = adminPassword;
-        this.userName = userName;
-        this.birth = birth;
-        this.email = email;
-        this.address = address;
-        this.gender = gender;
-        this.phoneNumber = phoneNumber;
+    public Member(JoinRequestDTO joinRequestDTO, String encodePassword, String role) {
+        this.nickname = joinRequestDTO.getNickname();
+        this.password = encodePassword;
+        this.userName = joinRequestDTO.getUserName();
+        this.birth = joinRequestDTO.getBirth();
+        this.email = joinRequestDTO.getEmail();
+        this.address = joinRequestDTO.getAddress();
+        this.gender = joinRequestDTO.getGender();
+        this.phoneNumber = joinRequestDTO.getPhoneNumber();
         this.role = role;
     }
 
