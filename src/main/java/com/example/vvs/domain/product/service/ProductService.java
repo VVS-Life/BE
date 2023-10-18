@@ -1,10 +1,10 @@
 package com.example.vvs.domain.product.service;
 
 import com.example.vvs.domain.common.MessageDTO;
+import com.example.vvs.domain.product.dto.PriceCalcRequestDTO;
 import com.example.vvs.domain.product.dto.PriceCalcResponseDTO;
 import com.example.vvs.domain.product.dto.ProductRequestDTO;
 import com.example.vvs.domain.product.dto.ProductResponseDTO;
-import com.example.vvs.domain.product.dto.PriceCalcRequestDTO;
 import com.example.vvs.domain.product.entity.Product;
 import com.example.vvs.domain.product.repository.ProductRepository;
 import com.example.vvs.exception.ApiException;
@@ -16,8 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.vvs.exception.ErrorHandling.*;
-import static org.springframework.http.HttpStatus.*;
+import static com.example.vvs.exception.ErrorHandling.IS_EMPTY_LIST;
+import static com.example.vvs.exception.ErrorHandling.NOT_FOUND_PRODUCT;
+import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class ProductService {
         List<ProductResponseDTO> dtoList = new ArrayList<>();
 
         if (productList.isEmpty()) {
-            throw  new ApiException(IS_EMPTY_LIST);
+            throw new ApiException(IS_EMPTY_LIST);
         }
 
         for (Product eachProduct : productList) {
@@ -80,7 +81,7 @@ public class ProductService {
 
     public ResponseEntity<ProductResponseDTO> findProductDetailById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(
-                () -> new ApiException(IS_NULL)
+                () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
         ProductResponseDTO productResponseDTO = ProductResponseDTO.builder().product(product).build();
@@ -89,7 +90,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO){
+    public ResponseEntity<ProductResponseDTO> createProduct(ProductRequestDTO productRequestDTO) {
 
         Product product = Product.builder()
                 .productName(productRequestDTO.getProductName())
@@ -106,10 +107,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO productRequestDTO){
+    public ResponseEntity<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO productRequestDTO) {
 
         Product product = productRepository.findById(id).orElseThrow(
-                () -> new ApiException(IS_NULL)
+                () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
         product.update(productRequestDTO);
@@ -120,10 +121,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> deleteProduct(Long id){
+    public ResponseEntity<MessageDTO> deleteProduct(Long id) {
 
         productRepository.findById(id).orElseThrow(
-                () -> new ApiException(IS_NULL)
+                () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
         productRepository.deleteById(id);
@@ -139,7 +140,7 @@ public class ProductService {
         Integer price = productRepository.findPriceById(id);
 
         if (price == 0) {
-            throw new ApiException(IS_NULL);
+            throw new ApiException(NOT_FOUND_PRODUCT);
         }
 
         price = calcExpectedPrice(gender, birth, price);
@@ -159,13 +160,13 @@ public class ProductService {
                 .build();
 
         Double womanDiscount = 0.0;
-        if(priceCalcRequestDTO.getGender()=='W')
+        if (priceCalcRequestDTO.getGender() == 'W')
             womanDiscount = 0.1;
 
         //19910101
-        Integer age = Integer.valueOf(priceCalcRequestDTO.getBirth().substring(0,4));
+        Integer age = Integer.valueOf(priceCalcRequestDTO.getBirth().substring(0, 4));
 
-        Integer totalPrice = price - (int)(price * womanDiscount + (2023-age)/10*price*0.18);
+        Integer totalPrice = price - (int) (price * womanDiscount + (2023 - age) / 10 * price * 0.18);
 
         return totalPrice;
     }
