@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -19,6 +20,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Reply {
 
     @Id
@@ -45,18 +47,13 @@ public class Reply {
     private Board board;
 
     @Builder
-    public Reply(Long id, String content, Timestamp createdAt, Timestamp modifiedAt, Member member, Board board) {
-        this.id = id;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+    public Reply(ReplyRequestDTO replyRequestDTO, Member member, Board board) {
+        this.content = replyRequestDTO.getContent();
         this.member = member;
         this.board = board;
     }
 
     public void update(ReplyRequestDTO replyRequestDTO){
         content = replyRequestDTO.getContent();
-        createdAt = replyRequestDTO.getCreatedAt();
-        modifiedAt = replyRequestDTO.getModifiedAt();
     }
 }
