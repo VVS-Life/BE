@@ -37,9 +37,9 @@ public class SubscriptionService {
     @Transactional
     public ResponseEntity<SubscriptionResponseDTO> createSubscription(Long productId,
                                                                       SubscriptionRequestDTO subscriptionRequestDTO,
-                                                                      Member member) {
+                                                                      Long memberId) {
 
-        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new ApiException(NOT_MATCH_USER)
         );
 
@@ -55,7 +55,7 @@ public class SubscriptionService {
         Subscription subscription = subscriptionRepository.save(Subscription.builder()
                 .subscriptionRequestDTO(subscriptionRequestDTO)
                 .product(product)
-                .member(findMember)
+                .member(member)
                 .build());
 
         return ResponseEntity.ok(SubscriptionResponseDTO.builder()
@@ -82,21 +82,17 @@ public class SubscriptionService {
         Page<SubscriptionResponseDTO> subscriptionResponseDTOPage = subscriptionRepository.findAllByIdOrderByIdDesc(memberId, pageable).map(
                 (Subscription subscription) -> SubscriptionResponseDTO.builder().subscription(subscription).build()
         );
+
         if (subscriptionResponseDTOPage.isEmpty()) {
             throw new ApiException(EMPTY_SUBSCRIPTION);
         }
+
         return ResponseEntity.ok(subscriptionResponseDTOPage);
     }
 
-    public ResponseEntity<Page<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Member member, Pageable pageable) {
+    public ResponseEntity<Page<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Long memberId, Pageable pageable) {
 
-        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new ApiException(NOT_MATCH_USER)
-        );
-
-        if (!findMember.getRole().equals("ADMIN")) {
-            throw new ApiException(NOT_MATCH_AUTHORIZTION);
-        }
+        isAdmin(memberId);
 
         Page<SubscriptionResponseDTO> subscriptionResponseDTOPage = subscriptionRepository.findAllByOrderByIdDesc(pageable).map(
                 (Subscription subscription) -> SubscriptionResponseDTO.builder().subscription(subscription).build()
@@ -109,15 +105,9 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> updateSubscription(Long id, SubscriptionRequestDTO subscriptionRequestDTO, Member member) {
+    public ResponseEntity<MessageDTO> updateAcceptSubscription(Long id, SubscriptionRequestDTO subscriptionRequestDTO, Long memberId) {
 
-        Member findAdmin = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new ApiException(NOT_MATCH_USER)
-        );
-
-        if (!findAdmin.getRole().equals("ADMIN")) {
-            throw new ApiException(NOT_MATCH_AUTHORIZTION);
-        }
+        isAdmin(memberId);
 
         Subscription subscription = subscriptionRepository.findById(id).orElseThrow(
                 () -> new ApiException(EMPTY_SUBSCRIPTION)
@@ -129,5 +119,31 @@ public class SubscriptionService {
                 .message("가입 승인이 완료되었습니다")
                 .statusCode(HttpStatus.OK.value())
                 .build());
+    }
+
+    public ResponseEntity<MessageDTO> updateRejectSubscription(Long id, SubscriptionRequestDTO subscriptionRequestDTO, Long memberId) {
+
+        isAdmin(memberId);
+
+        Subscription subscription = subscriptionRepository.findById(id).orElseThrow(
+                () -> new ApiException(EMPTY_SUBSCRIPTION)
+        );
+
+        subscription.update(subscriptionRequestDTO);
+
+        return ResponseEntity.ok(MessageDTO.builder()
+                .message("가입이 거절되었습니다")
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+    private void isAdmin(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new ApiException(NOT_MATCH_USER)
+        );
+
+        if (!member.getRole().equals("ADMIN")) {
+            throw new ApiException(NOT_MATCH_AUTHORIZTION);
+        }
     }
 }
