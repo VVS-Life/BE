@@ -31,7 +31,7 @@ public class ReplyService {
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
 
-    public ResponseEntity<List<ReplyResponseDTO>> findReplyList(Long boardId){
+    public ResponseEntity<List<ReplyResponseDTO>> findReplyList(Long boardId) {
         List<Reply> replyList = replyRepository.findAllByBoardIdOrderByIdDesc(boardId);
         List<ReplyResponseDTO> dtoList = new ArrayList<>();
 
@@ -39,18 +39,10 @@ public class ReplyService {
             throw new ApiException(IS_EMPTY_REPLY_LIST);
         }
 
-        for (Reply eachReply : replyList) {
-            Reply reply = Reply.builder()
-                    .id(eachReply.getId())
-                    .content(eachReply.getContent())
-                    .createdAt(eachReply.getCreatedAt())
-                    .modifiedAt(eachReply.getModifiedAt())
-                    .member(eachReply.getMember())
-                    .board(eachReply.getBoard())
+        for (Reply reply : replyList) {
+            ReplyResponseDTO replyResponseDTO = ReplyResponseDTO.builder()
+                    .reply(reply)
                     .build();
-
-            ReplyResponseDTO replyResponseDTO = ReplyResponseDTO.builder().reply(reply).build();
-
             dtoList.add(replyResponseDTO);
         }
 
@@ -58,21 +50,18 @@ public class ReplyService {
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> createReply(ReplyRequestDTO replyRequestDTO, Long boardId){
+    public ResponseEntity<MessageDTO> createReply(ReplyRequestDTO replyRequestDTO, Long boardId, Long memberId) {
 
-        Member member = memberRepository.findById(replyRequestDTO.getMemberId())
-                .orElseThrow(
-                        ()->new ApiException(NOT_MATCH_USER)
-                );
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(
-                        ()->new ApiException(NOT_FOUND_BOARD_ID)
-                );
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new ApiException(NOT_MATCH_USER)
+        );
+
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new ApiException(NOT_FOUND_BOARD_ID)
+        );
 
         Reply reply = Reply.builder()
-                .content(replyRequestDTO.getContent())
-                .createdAt(replyRequestDTO.getCreatedAt())
-                .modifiedAt(replyRequestDTO.getModifiedAt())
+                .replyRequestDTO(replyRequestDTO)
                 .member(member)
                 .board(board)
                 .build();
@@ -86,10 +75,15 @@ public class ReplyService {
     }
 
     @Transactional
-    public ResponseEntity<ReplyResponseDTO> updateReply(Long boardId, Long replyId, ReplyRequestDTO replyRequestDTO){
+    public ResponseEntity<ReplyResponseDTO> updateReply(Long boardId, Long replyId,
+                                                        ReplyRequestDTO replyRequestDTO, Long memberId) {
+
+        memberRepository.findById(memberId).orElseThrow(
+                () -> new ApiException(NOT_MATCH_USER)
+        );
 
         boardRepository.findById(boardId).orElseThrow(
-                ()-> new ApiException(NOT_FOUND_BOARD_ID)
+                () -> new ApiException(NOT_FOUND_BOARD_ID)
         );
 
         Reply reply = replyRepository.findById(replyId).orElseThrow(
@@ -98,16 +92,22 @@ public class ReplyService {
 
         reply.update(replyRequestDTO);
 
-        ReplyResponseDTO replyResponseDTO = ReplyResponseDTO.builder().reply(reply).build();
+        ReplyResponseDTO replyResponseDTO = ReplyResponseDTO.builder()
+                .reply(reply)
+                .build();
 
         return ResponseEntity.ok(replyResponseDTO);
     }
 
     @Transactional
-    public ResponseEntity<MessageDTO> deleteReply(Long boardId, Long replyId){
+    public ResponseEntity<MessageDTO> deleteReply(Long boardId, Long replyId, Long memberId) {
+
+        memberRepository.findById(memberId).orElseThrow(
+                () -> new ApiException(NOT_MATCH_USER)
+        );
 
         boardRepository.findById(boardId).orElseThrow(
-                ()-> new ApiException(NOT_FOUND_BOARD_ID)
+                () -> new ApiException(NOT_FOUND_BOARD_ID)
         );
 
         replyRepository.findById(replyId).orElseThrow(
