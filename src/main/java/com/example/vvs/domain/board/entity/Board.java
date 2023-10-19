@@ -31,11 +31,12 @@ public class Board {
 
     @Column(length = 50, nullable = false)
     private String title;
-    @Column(columnDefinition = "TEXT", nullable = false) //
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
     @Column(length = 10, nullable = false)
     @ColumnDefault("\"답변 대기\"")
     private String isAnswer;
+    @Column(columnDefinition = "TEXT")
     private String image;
     @Column(length = 10, nullable = false)
     private String isPublic;

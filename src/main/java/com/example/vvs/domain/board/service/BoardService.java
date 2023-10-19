@@ -4,6 +4,7 @@ import com.example.vvs.domain.board.dto.BoardRequestDTO;
 import com.example.vvs.domain.board.dto.BoardResponseDTO;
 import com.example.vvs.domain.board.entity.Board;
 import com.example.vvs.domain.board.repository.BoardRepository;
+import com.example.vvs.domain.board.util.PagingUtil;
 import com.example.vvs.domain.common.MessageDTO;
 import com.example.vvs.domain.common.s3.S3Service;
 import com.example.vvs.domain.member.entity.Member;
@@ -19,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.vvs.exception.ErrorHandling.*;
 
@@ -43,7 +46,7 @@ public class BoardService {
                 () -> new ApiException(NOT_MATCH_USER)
         );
 
-        if (multipartFileList.isEmpty()) {
+        if (multipartFileList == null) {
             boardRepository.save(Board.builder()
                     .boardRequestDTO(boardRequestDTO)
                     .image(null)
@@ -56,26 +59,9 @@ public class BoardService {
                     .build(), null, HttpStatus.OK);
         }
 
-//        for (MultipartFile multipartFile : multipartFileList) {
-//            // 파일첨부를 하지 않은 경우 - img를 null로 입력하여 저장.
-//            if (multipartFile.getOriginalFilename().equals("")) {
-//                boardRepository.save(Board.builder()
-//                        .boardRequestDTO(boardRequestDTO)
-//                        .image(null)
-//                        .member(member)
-//                        .build());
-//                //Diary diary = diaryRepository.save(Diary.of(diaryRequestDto, null, member));
-//                return new ResponseEntity<>(MessageDTO.builder()
-//                        .message("게시글 등록 성공")
-//                        .statusCode(HttpStatus.OK.value())
-//                        .build(), null, HttpStatus.OK);
-//            }
-//        }
-
         s3Service.uploadBoard(multipartFileList, boardRequestDTO, member);
-
         String uploadImageUrl = s3Service.getUploadImageUrl();
-
+        s3Service.resetUrl();
 
         // 이거 condition 설정 왜함?
         /*DiaryCondition condition = PUBLIC;
@@ -96,11 +82,31 @@ public class BoardService {
                 .build());
     }
 
-    public ResponseEntity<Page<BoardResponseDTO>> findAllBoard(PageRequest pageRequest) {
-        Page<BoardResponseDTO> boards = boardRepository.findAllByOrderByIdDesc(pageRequest)
-                .map((Board board) -> BoardResponseDTO.builder().board(board).build());
+    public int findAllCount() {
+        return (int) boardRepository.count();
+    }
 
-        return ResponseEntity.ok(boards);
+    public ResponseEntity<Map<Page<BoardResponseDTO>, PagingUtil>> findAllBoard(Integer page) {
+        PageRequest pageRequest = PageRequest.of(page-1, 5);
+        Page<BoardResponseDTO> boards = boardRepository.findAllByOrderByIdDesc(pageRequest)
+                .map((Board board) -> BoardResponseDTO.builder().board(board).member(board.getMember()).build());
+
+        PagingUtil pu = new PagingUtil(page, 5, 5);
+        pu.setObjectCountTotal(findAllCount());
+        pu.setCalcForPaging();
+
+        System.out.println("p_num : "+page);
+        System.out.println(pu.toString());
+
+        if (boards == null || boards.isEmpty()) {
+            return null;
+        }
+
+        Map result = new HashMap<>();
+        result.put("pagingData", pu);
+        result.put("list", boards);
+
+        return ResponseEntity.ok(result);
     }
 
     public ResponseEntity<BoardResponseDTO> findBoard(Long id) {
@@ -109,12 +115,11 @@ public class BoardService {
                         NullPointerException::new
                 );
 
-        BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder().board(board).build();
+        BoardResponseDTO boardResponseDTO = BoardResponseDTO.builder().board(board).member(board.getMember()).build();
 
         return ResponseEntity.ok(boardResponseDTO); // ResponseEntity<BoardResponseDTO> 타입
     }
 
-    // TODO: 2023/10/14 세션 처리 필요
     @Transactional
     public ResponseEntity<MessageDTO> updateBoard(BoardRequestDTO boardRequestDTO, Long boardId, Long memberId) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
@@ -148,14 +153,24 @@ public class BoardService {
                 () -> new ApiException(NOT_FOUND_BOARD_ID)
         );
 
-        // TODO: 2023/10/14  작성자 객체 대신 일단 id만
-        if (!board.getMember().getId().equals(findMember.getId()) || !findMember.getRole().equals("ADMIN")) {
-            throw new ApiException(NOT_MATCH_AUTHORIZTION); // ErrorHandling.NOT_MATCH_AUTHORIZTION 로 에러 처리.
+        // S3 업로드 파일 삭제
+        if (board.getImage() != null) {
+            String uploadPath = board.getImage(); // "url1, url2,,," 형식으로 구성.
+            String[] fileNames = uploadPath.split(","); //콤마로 구분하여 각각 삭제시켜줘야함.
+            for (String fileName : fileNames) { // 파일 하나씩 삭제
+                String realFileName = fileName.substring(57);
+                s3Service.deleteFile(realFileName); // 삭제할 때 url이 아닌 name을 줘야하기 때문에 url 앞의 57글자를 삭제시켜 이후의 name만 가져다 쓰도록 substring을 사용.
+                System.out.println(fileName.substring(57));
+            }
         }
 
-        // 삭제
-        //boardRepository.deleteById(id); //id로 삭제.
-        boardRepository.delete(board);
+        if (board.getMember().getId().equals(findMember.getId()) || findMember.getRole().equals("ADMIN")) {
+            // 삭제
+            //boardRepository.deleteById(id); //id로 삭제.
+            boardRepository.delete(board);
+        } else {
+            throw new ApiException(NOT_MATCH_AUTHORIZTION); // ErrorHandling.NOT_MATCH_AUTHORIZTION 로 에러 처리.
+        }
 
         return ResponseEntity.ok(MessageDTO.builder()
                 .message("게시글 삭제 성공")

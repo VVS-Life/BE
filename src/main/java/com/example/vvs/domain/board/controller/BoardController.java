@@ -3,6 +3,7 @@ package com.example.vvs.domain.board.controller;
 import com.example.vvs.domain.board.dto.BoardRequestDTO;
 import com.example.vvs.domain.board.dto.BoardResponseDTO;
 import com.example.vvs.domain.board.service.BoardService;
+import com.example.vvs.domain.board.util.PagingUtil;
 import com.example.vvs.domain.common.MessageDTO;
 import com.example.vvs.domain.security.MemberDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class BoardController {
 
     private final BoardService boardService; // 이거 왜 final로 만들지? RequiredArgsConstructor가 인식해서 의존성 주입해줄 수 있도록!
@@ -33,10 +36,8 @@ public class BoardController {
 
     // 게시판 전체 조회
     @GetMapping("/board") // /board?page=1&size=10
-    public ResponseEntity<Page<BoardResponseDTO>> getBoardPage(@RequestParam(value = "page", required = false) Integer page,
-                                           @RequestParam(value = "size", required = false) Integer size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return boardService.findAllBoard(pageRequest);
+    public ResponseEntity<Map<Page<BoardResponseDTO>, PagingUtil>> getBoardPage(@RequestParam(value = "page", required = false) Integer page) {
+        return boardService.findAllBoard(page);
     }
 
     // 게시글 상세 조회
@@ -59,6 +60,4 @@ public class BoardController {
                                                   @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         return boardService.deleteBoard(id, memberDetails.getMember().getId());
     }
-
-
 }

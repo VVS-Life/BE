@@ -1,6 +1,7 @@
 package com.example.vvs.domain.board.dto;
 
 import com.example.vvs.domain.board.entity.Board;
+import com.example.vvs.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class BoardResponseDTO {
 
     //private Long id;
     private Long id;
+    private String nickName;
     private String title;
     private String content;
     private String isAnswer;
@@ -26,8 +28,9 @@ public class BoardResponseDTO {
     // 이제는 server에서 client로 보내기 때문에 Java객체를 json으로 보내주기 위해 아래와 객체를 받아 본 응답 객체로 변환한다.
 
     @Builder
-    public BoardResponseDTO(Board board) {
+    public BoardResponseDTO(Board board, Member member) {
         this.id = board.getId();
+        this.nickName = member.getNickname();
         this.title = board.getTitle();
         this.content = board.getContent();
         this.isAnswer = board.getIsAnswer();

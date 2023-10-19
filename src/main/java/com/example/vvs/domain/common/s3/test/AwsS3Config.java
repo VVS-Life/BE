@@ -1,3 +1,4 @@
+/*
 package com.example.vvs.domain.common.s3;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -33,3 +34,4 @@ public class AwsS3Config {
                 .build();
     }
 }
+*/
