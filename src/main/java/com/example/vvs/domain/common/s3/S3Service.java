@@ -90,12 +90,15 @@ public class S3Service {
     public String getUploadImageUrl() {
         return uploadImageUrl;
     }
+    public void resetUrl() {
+        uploadImageUrl ="";
+    }
 
 
-    public void deleteFile(String fileName) {
-        if (!S3Client.doesObjectExist(bucketName, fileName)) {
-            throw new ApiException(FILE_NOT_FOUND);
-        }
+    public void deleteFile(String fileName) { // 실제 s3에서 삭제 안됌
+//        if (!S3Client.doesObjectExist(bucketName, fileName)) {
+//            throw new ApiException(FILE_NOT_FOUND);
+//        }
 
         S3Client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
     }
