@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -38,7 +39,7 @@ public class Subscription {
     @ColumnDefault("\"가입 대기\"")
     private String isApproval;
     private String reason;
-    @CreatedDate
+    @LastModifiedDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp applyDate;
     @CreatedDate
@@ -75,5 +76,6 @@ public class Subscription {
 
     public void update(SubscriptionRequestDTO subscriptionRequestDTO) {
         this.isApproval = subscriptionRequestDTO.getIsApproval();
+        this.applyDate = subscriptionRequestDTO.getApplyDate();
     }
 }

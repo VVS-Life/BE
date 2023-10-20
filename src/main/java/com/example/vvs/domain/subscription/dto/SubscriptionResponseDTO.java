@@ -22,6 +22,7 @@ public class SubscriptionResponseDTO {
 
     private String productName;
     private String username;
+    private String phoneNumber;
 
     @Builder
     public SubscriptionResponseDTO(Subscription subscription, Product product, Member member) {
@@ -35,5 +36,6 @@ public class SubscriptionResponseDTO {
         this.endDate = subscription.getEndDate();
         this.productName = product.getProductName();
         this.username = member.getUserName();
+        this.phoneNumber = member.getPhoneNumber();
     }
 }
