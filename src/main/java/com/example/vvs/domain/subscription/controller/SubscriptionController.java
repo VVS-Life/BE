@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class SubscriptionController {
@@ -33,9 +35,8 @@ public class SubscriptionController {
     }
 
     @GetMapping("/subscription")
-    public ResponseEntity<Page<SubscriptionResponseDTO>> getSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                                             @PageableDefault Pageable pageable) {
-        return subscriptionService.findAllSubscriptionPage(memberDetails.getMember().getId(), pageable);
+    public ResponseEntity<List<SubscriptionResponseDTO>> getSubscriptionList(@AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+        return subscriptionService.findAllSubscriptionList(memberDetails.getMember().getId());
     }
 
     @GetMapping("/subscription/admin")
