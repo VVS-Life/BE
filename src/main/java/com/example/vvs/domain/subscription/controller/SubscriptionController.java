@@ -40,9 +40,8 @@ public class SubscriptionController {
     }
 
     @GetMapping("/subscription/admin")
-    public ResponseEntity<Page<SubscriptionResponseDTO>> getAdminSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                                                  @PageableDefault Pageable pageable) {
-        return subscriptionService.findAllSubscriptionAdminPage(memberDetails.getMember().getId(), pageable);
+    public ResponseEntity<List<SubscriptionResponseDTO>> getAdminSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+        return subscriptionService.findAllSubscriptionAdminPage(memberDetails.getMember().getId());
     }
 
     @PatchMapping("/subscription/admin/accept/{subscription-id}")

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    Page<Subscription> findAllByOrderByIdDesc(Pageable pageable);
+    List<Subscription> findAllByOrderByApplyDateDesc();
 
     List<Subscription> findAllByMemberIdOrderByApplyDateDesc(Long memberId);
 
