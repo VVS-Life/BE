@@ -13,8 +13,6 @@ import com.example.vvs.exception.ApiException;
 import com.example.vvs.exception.ErrorHandling;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -113,11 +111,11 @@ public class SubscriptionService {
         return ResponseEntity.ok(subscriptionResponseDTOList);
     }
 
-    public ResponseEntity<List<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Long memberId) {
+    public ResponseEntity<List<SubscriptionResponseDTO>> findAllSubscriptionAdminList(Long memberId) {
 
         isAdmin(memberId);
 
-        List<Subscription> subscriptionList = subscriptionRepository.findAllByOrderByApplyDateDesc();
+        List<Subscription> subscriptionList = subscriptionRepository.findAllByIsApprovalOrderByApplyDateDesc("가입 대기");
         List<SubscriptionResponseDTO> subscriptionResponseDTOList = new ArrayList<>();
 
 
@@ -139,9 +137,6 @@ public class SubscriptionService {
             subscriptionResponseDTOList.add(subscriptionResponseDTO);
         }
 
-        if (subscriptionResponseDTOList.isEmpty()) {
-            throw new ApiException(EMPTY_SUBSCRIPTION);
-        }
         return ResponseEntity.ok(subscriptionResponseDTOList);
     }
 
@@ -158,10 +153,11 @@ public class SubscriptionService {
 
         return ResponseEntity.ok(MessageDTO.builder()
                 .message("가입 승인이 완료되었습니다")
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.OK.value()) // 200
                 .build());
     }
 
+    @Transactional
     public ResponseEntity<MessageDTO> updateRejectSubscription(Long id, SubscriptionRequestDTO subscriptionRequestDTO, Long memberId) {
 
         isAdmin(memberId);
