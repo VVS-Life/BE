@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.vvs.exception.ErrorHandling.*;
@@ -60,6 +62,8 @@ public class SubscriptionService {
 
         return ResponseEntity.ok(SubscriptionResponseDTO.builder()
                 .subscription(subscription)
+                .product(product)
+                .member(member)
                 .build());
     }
 
@@ -78,16 +82,35 @@ public class SubscriptionService {
                 .build());
     }
 
-    public ResponseEntity<Page<SubscriptionResponseDTO>> findAllSubscriptionPage(Long memberId, Pageable pageable) {
-        Page<SubscriptionResponseDTO> subscriptionResponseDTOPage = subscriptionRepository.findAllByIdOrderByIdDesc(memberId, pageable).map(
-                (Subscription subscription) -> SubscriptionResponseDTO.builder().subscription(subscription).build()
+    public ResponseEntity<List<SubscriptionResponseDTO>> findAllSubscriptionList(Long memberId) {
+        List<Subscription> subscriptionList = subscriptionRepository.findAllByMemberIdOrderByApplyDateDesc(memberId);
+        List<SubscriptionResponseDTO> subscriptionResponseDTOList = new ArrayList<>();
+
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new ApiException(NOT_MATCH_USER)
         );
 
-        if (subscriptionResponseDTOPage.isEmpty()) {
+        System.out.println("member" + member.getNickname());
+
+        for (Subscription subscription : subscriptionList) {
+
+            Product product = productRepository.findById(subscription.getProduct().getId()).orElseThrow(
+                    () -> new ApiException(NOT_FOUND_PRODUCT)
+            );
+
+            SubscriptionResponseDTO subscriptionResponseDTO = SubscriptionResponseDTO.builder()
+                    .subscription(subscription)
+                    .product(product)
+                    .member(member)
+                    .build();
+            subscriptionResponseDTOList.add(subscriptionResponseDTO);
+        }
+
+        if (subscriptionResponseDTOList.isEmpty()) {
             throw new ApiException(EMPTY_SUBSCRIPTION);
         }
 
-        return ResponseEntity.ok(subscriptionResponseDTOPage);
+        return ResponseEntity.ok(subscriptionResponseDTOList);
     }
 
     public ResponseEntity<Page<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Long memberId, Pageable pageable) {
