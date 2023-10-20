@@ -115,12 +115,17 @@ public class SubscriptionService {
 
     public ResponseEntity<List<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Long memberId) {
 
-        Member member = isAdmin(memberId);
+        isAdmin(memberId);
 
         List<Subscription> subscriptionList = subscriptionRepository.findAllByOrderByApplyDateDesc();
         List<SubscriptionResponseDTO> subscriptionResponseDTOList = new ArrayList<>();
 
+
         for (Subscription subscription : subscriptionList) {
+            Member member = memberRepository.findById(subscription.getMember().getId()).orElseThrow(
+                    () -> new ApiException(NOT_MATCH_USER)
+            );
+
             Product product = productRepository.findById(subscription.getProduct().getId()).orElseThrow(
                     () -> new ApiException(NOT_FOUND_PRODUCT)
             );
