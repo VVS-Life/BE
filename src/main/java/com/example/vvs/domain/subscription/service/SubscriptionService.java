@@ -113,18 +113,31 @@ public class SubscriptionService {
         return ResponseEntity.ok(subscriptionResponseDTOList);
     }
 
-    public ResponseEntity<Page<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Long memberId, Pageable pageable) {
+    public ResponseEntity<List<SubscriptionResponseDTO>> findAllSubscriptionAdminPage(Long memberId) {
 
-        isAdmin(memberId);
+        Member member = isAdmin(memberId);
 
-        Page<SubscriptionResponseDTO> subscriptionResponseDTOPage = subscriptionRepository.findAllByOrderByIdDesc(pageable).map(
-                (Subscription subscription) -> SubscriptionResponseDTO.builder().subscription(subscription).build()
-        );
+        List<Subscription> subscriptionList = subscriptionRepository.findAllByOrderByApplyDateDesc();
+        List<SubscriptionResponseDTO> subscriptionResponseDTOList = new ArrayList<>();
 
-        if (subscriptionResponseDTOPage.isEmpty()) {
+        for (Subscription subscription : subscriptionList) {
+            Product product = productRepository.findById(subscription.getProduct().getId()).orElseThrow(
+                    () -> new ApiException(NOT_FOUND_PRODUCT)
+            );
+
+            SubscriptionResponseDTO subscriptionResponseDTO = SubscriptionResponseDTO.builder()
+                    .subscription(subscription)
+                    .member(member)
+                    .product(product)
+                    .build();
+
+            subscriptionResponseDTOList.add(subscriptionResponseDTO);
+        }
+
+        if (subscriptionResponseDTOList.isEmpty()) {
             throw new ApiException(EMPTY_SUBSCRIPTION);
         }
-        return ResponseEntity.ok(subscriptionResponseDTOPage);
+        return ResponseEntity.ok(subscriptionResponseDTOList);
     }
 
     @Transactional
@@ -160,7 +173,7 @@ public class SubscriptionService {
                 .build());
     }
 
-    private void isAdmin(Long memberId) {
+    private Member isAdmin(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new ApiException(NOT_MATCH_USER)
         );
@@ -168,5 +181,7 @@ public class SubscriptionService {
         if (!member.getRole().equals("ADMIN")) {
             throw new ApiException(NOT_MATCH_AUTHORIZTION);
         }
+
+        return member;
     }
 }
