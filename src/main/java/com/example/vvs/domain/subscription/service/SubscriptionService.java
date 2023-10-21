@@ -47,7 +47,7 @@ public class SubscriptionService {
                 () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
-        Optional<Subscription> findSubscription = subscriptionRepository.findByProductId(productId);
+        Optional<Subscription> findSubscription = subscriptionRepository.findByProductIdAndMemberId(productId, memberId);
         if (findSubscription.isPresent()) {
             throw new ApiException(ErrorHandling.DUPLICATE_SUBSCRIPTION);
         }
