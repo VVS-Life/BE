@@ -31,11 +31,12 @@ public class Board {
 
     @Column(length = 50, nullable = false)
     private String title;
-    @Column(columnDefinition = "TEXT", nullable = false) //
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
     @Column(length = 10, nullable = false)
     @ColumnDefault("\"답변 대기\"")
     private String isAnswer;
+    @Column(columnDefinition = "TEXT")
     private String image;
     @Column(length = 10, nullable = false)
     private String isPublic;
@@ -54,7 +55,7 @@ public class Board {
     // BoardRequestDTO가 json형식의 데이터를 받았으면
     // Board 객체의 생성자를 통해서 Board객체를 만들어준다.
     @Builder
-    public Board(BoardRequestDTO boardRequestDTO, String image , Member member) {
+    public Board(BoardRequestDTO boardRequestDTO, String image, Member member) {
         this.title = boardRequestDTO.getTitle();
         this.content = boardRequestDTO.getContent();
         this.isAnswer = boardRequestDTO.getIsAnswer(); // 등록시 얘는 null이지만 DB에는 디폴트값인 "답변 대기"로 들어간다.

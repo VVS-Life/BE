@@ -1,4 +1,5 @@
-package com.example.vvs.domain.common.s3;
+/*
+package com.example.vvs.domain.common.s3.test;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -14,3 +15,4 @@ public class AwsS3 {
         this.path = path;
     }
 }
+*/

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.vvs.exception.ErrorHandling.IS_EMPTY_LIST;
-import static com.example.vvs.exception.ErrorHandling.IS_NULL;
+import static com.example.vvs.exception.ErrorHandling.NOT_FOUND_PRODUCT;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
@@ -81,7 +81,7 @@ public class ProductService {
 
     public ResponseEntity<ProductResponseDTO> findProductDetailById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(
-                () -> new ApiException(IS_NULL)
+                () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
         ProductResponseDTO productResponseDTO = ProductResponseDTO.builder().product(product).build();
@@ -110,7 +110,7 @@ public class ProductService {
     public ResponseEntity<ProductResponseDTO> updateProduct(Long id, ProductRequestDTO productRequestDTO) {
 
         Product product = productRepository.findById(id).orElseThrow(
-                () -> new ApiException(IS_NULL)
+                () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
         product.update(productRequestDTO);
@@ -124,7 +124,7 @@ public class ProductService {
     public ResponseEntity<MessageDTO> deleteProduct(Long id) {
 
         productRepository.findById(id).orElseThrow(
-                () -> new ApiException(IS_NULL)
+                () -> new ApiException(NOT_FOUND_PRODUCT)
         );
 
         productRepository.deleteById(id);
@@ -140,7 +140,7 @@ public class ProductService {
         Integer price = productRepository.findPriceById(id);
 
         if (price == 0) {
-            throw new ApiException(IS_NULL);
+            throw new ApiException(NOT_FOUND_PRODUCT);
         }
 
         price = calcExpectedPrice(gender, birth, price);

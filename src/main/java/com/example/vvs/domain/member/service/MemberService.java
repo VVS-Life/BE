@@ -9,6 +9,7 @@ import com.example.vvs.domain.member.repository.MemberRepository;
 import com.example.vvs.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,6 @@ import static com.example.vvs.exception.ErrorHandling.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class MemberService {
 
     private final JwtUtil jwtUtil;
@@ -28,7 +28,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public MessageDTO createMember(JoinRequestDTO joinRequestDTO) {
+    public ResponseEntity<MessageDTO> createMember(JoinRequestDTO joinRequestDTO) {
 
         String encodePassword = passwordEncoder.encode(joinRequestDTO.getPassword());
 
@@ -40,10 +40,7 @@ public class MemberService {
             throw new ApiException(NO_UNIQUE_PHONENUMBER);
         }
 
-        String role = joinRequestDTO.getRole() == null ? "MEMBER" : joinRequestDTO.getRole();
-        if (!(role.equals("MEMBER") || role.equals("ADMIN"))) {
-            throw new ApiException(NOT_EXISTENCE_ROLE);
-        }
+        String role = "MEMBER";
 
         Member member = Member.builder()
                 .joinRequestDTO(joinRequestDTO)
@@ -53,15 +50,44 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return MessageDTO.builder()
+        return ResponseEntity.ok(MessageDTO.builder()
                 .message("회원 가입 완료")
                 .statusCode(HttpStatus.ACCEPTED.value())
-                .build();
+                .build());
     }
 
     @Transactional
-    public MessageDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
-      
+    public ResponseEntity<MessageDTO> createAdmin(JoinRequestDTO joinRequestDTO) {
+
+        String encodePassword = passwordEncoder.encode(joinRequestDTO.getPassword());
+
+        if (memberRepository.existsByNickname(joinRequestDTO.getNickname())) {
+            throw new ApiException(NO_UNIQUE_LOGIN_ID);
+        }
+
+        if (memberRepository.existsByPhoneNumber(joinRequestDTO.getPhoneNumber())) {
+            throw new ApiException(NO_UNIQUE_PHONENUMBER);
+        }
+
+        String role = "ADMIN";
+
+        Member member = Member.builder()
+                .joinRequestDTO(joinRequestDTO)
+                .encodePassword(encodePassword)
+                .role(role)
+                .build();
+
+        memberRepository.save(member);
+
+        return ResponseEntity.ok(MessageDTO.builder()
+                .message("회원 가입 완료")
+                .statusCode(HttpStatus.ACCEPTED.value())
+                .build());
+    }
+
+    @Transactional
+    public ResponseEntity<MessageDTO> login(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+
         Member member = memberRepository.findByNickname(loginRequestDTO.getNickname()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
         );
@@ -74,14 +100,14 @@ public class MemberService {
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getNickname(), member.getRole()));
 
-        return MessageDTO.builder()
+        return ResponseEntity.ok(MessageDTO.builder()
                 .message("로그인 성공")
                 .statusCode(HttpStatus.OK.value())
-                .build();
+                .build());
     }
 
     @Transactional
-    public MessageDTO adminLogin(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
+    public ResponseEntity<MessageDTO> adminLogin(LoginRequestDTO loginRequestDTO, HttpServletResponse response) {
 
         Member member = memberRepository.findByNickname(loginRequestDTO.getNickname()).orElseThrow(
                 () -> new ApiException(NOT_FOUND_ADMIN_ID)
@@ -94,9 +120,9 @@ public class MemberService {
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getNickname(), member.getRole()));
 
 
-        return MessageDTO.builder()
+        return ResponseEntity.ok(MessageDTO.builder()
                 .message("로그인 성공")
                 .statusCode(HttpStatus.OK.value())
-                .build();
+                .build());
     }
 }

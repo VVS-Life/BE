@@ -13,40 +13,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-    @PostMapping("/subscription")
-    public ResponseEntity<SubscriptionResponseDTO> postSubscription(@RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
+    @PostMapping("/product/{product-id}/subscription")
+    public ResponseEntity<SubscriptionResponseDTO> postSubscription(@PathVariable("product-id") Long productId,
+                                                                    @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
                                                                     @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
-        return subscriptionService.createSubscription(subscriptionRequestDTO, memberDetails.getMember());
+        return subscriptionService.createSubscription(productId, subscriptionRequestDTO, memberDetails.getMember().getId());
     }
 
     @GetMapping("/subscription/{subscription-id}")
-    public SubscriptionResponseDTO getSubscription(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                   @PathVariable("subscription-id") Long subscriptionId) {
+    public ResponseEntity<SubscriptionResponseDTO> getSubscription(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
+                                                                   @PathVariable("subscription-id") Long subscriptionId) {
         return subscriptionService.findSubscription(memberDetails.getMember(), subscriptionId);
     }
 
     @GetMapping("/subscription")
-    public Page<SubscriptionResponseDTO> getSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                             @PageableDefault Pageable pageable) {
-        return subscriptionService.findAllSubscriptionPage(memberDetails.getMember().getId(), pageable);
+    public ResponseEntity<List<SubscriptionResponseDTO>> getSubscriptionList(@AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+        return subscriptionService.findAllSubscriptionList(memberDetails.getMember().getId());
     }
 
     @GetMapping("/subscription/admin")
-    public Page<SubscriptionResponseDTO> getAdminSubscriptionPage(@AuthenticationPrincipal MemberDetailsImpl memberDetails,
-                                                                  @PageableDefault Pageable pageable) {
-        return subscriptionService.findAllSubscriptionAdminPage(memberDetails.getMember(), pageable);
+    public ResponseEntity<List<SubscriptionResponseDTO>> getAdminSubscriptionList(@AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+        return subscriptionService.findAllSubscriptionAdminList(memberDetails.getMember().getId());
     }
 
-    @PatchMapping("/subscription/admin/{subscription-id}")
-    public MessageDTO updateSubscription(@PathVariable("subscription-id") Long id,
-                                         @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
-                                         @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
-        return subscriptionService.updateSubscription(id, subscriptionRequestDTO, memberDetails.getMember());
+    @PatchMapping("/subscription/admin/accept/{subscription-id}")
+    public ResponseEntity<MessageDTO> updateAcceptSubscription(@PathVariable("subscription-id") Long id,
+                                                         @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
+                                                         @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+        return subscriptionService.updateAcceptSubscription(id, subscriptionRequestDTO, memberDetails.getMember().getId());
+    }
+
+    @PatchMapping("/subscription/admin/reject/{subscription-id}")
+    public ResponseEntity<MessageDTO> updateRejectSubscription(@PathVariable("subscription-id") Long id,
+                                                         @RequestBody SubscriptionRequestDTO subscriptionRequestDTO,
+                                                         @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+        return subscriptionService.updateRejectSubscription(id, subscriptionRequestDTO, memberDetails.getMember().getId());
     }
 }

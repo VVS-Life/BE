@@ -1,13 +1,16 @@
 package com.example.vvs.domain.subscription.repository;
 
 import com.example.vvs.domain.subscription.entity.Subscription;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    Page<Subscription> findAllByOrderByIdDesc(Pageable pageable);
+    List<Subscription> findAllByIsApprovalOrderByApplyDateDesc(String isApproval);
 
-    Page<Subscription> findAllByIdOrderByIdDesc(Long id, Pageable pageable);
+    List<Subscription> findAllByMemberIdOrderByApplyDateDesc(Long memberId);
+
+    Optional<Subscription> findByProductIdAndMemberId(Long productId, Long memberId);
 }

@@ -1,4 +1,5 @@
-package com.example.vvs.domain.common.s3;
+/*
+package com.example.vvs.domain.common.s3.test;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,8 @@ public class AwsS3Controller {
     }
 
     @DeleteMapping("/resource")
-    public void remove(AwsS3 awsS3) {
+    public void remove(@RequestBody AwsS3 awsS3) {
         awsS3Service.remove(awsS3);
     }
 }
+*/
